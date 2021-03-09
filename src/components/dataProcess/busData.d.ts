@@ -25,6 +25,7 @@ declare interface StopSource {
     stopLocationId: number;
     vector: string;
 };
+
 declare interface RouteSource {
     Authority: string;
     Direction: number;
@@ -49,4 +50,8 @@ declare interface RouteSource {
     TownName: string;
     UpdateTime: string;
     VersionID: number;
+};
+
+declare interface RoutesFilter {
+    [routeID: string]: RouteFilter[];
 };
