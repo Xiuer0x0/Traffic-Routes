@@ -25,3 +25,28 @@ declare interface StopSource {
     stopLocationId: number;
     vector: string;
 };
+declare interface RouteSource {
+    Authority: string;
+    Direction: number;
+    Geohash: string;
+    InfoDate: string;
+    LocationCityCode: string;
+    OpreatorNo: number;
+    PositionLat: number;
+    PositionLon: number;
+    SrcUpdateTime: string;
+    StationID: number;
+    StationNameID: string | null;
+    StationUID: string;
+    StopBoarding: number;
+    StopID: StopID;
+    StopNameEn: string;
+    StopNameZh: string;
+    StopSequence: number;
+    StopUID: string;
+    SubrouteUID: string;
+    TownID: number;
+    TownName: string;
+    UpdateTime: string;
+    VersionID: number;
+};
