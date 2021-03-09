@@ -52,6 +52,27 @@ declare interface RouteSource {
     VersionID: number;
 };
 
+declare interface RouteFilter {
+    direction: number;
+    stopID: StopID;
+    stopSequence: number;
+};
+
 declare interface RoutesFilter {
     [routeID: string]: RouteFilter[];
+};
+
+declare interface RouteInfo {
+    outbound: ClassifyBusRoute[];
+    returnTrip: ClassifyBusRoute[];
+    cycle: ClassifyBusRoute[];
+};
+
+declare interface Routes {
+    [routeID: string]: RouteInfo;
+};
+
+declare interface ClassifyBusRoute {
+    stopID: StopID;
+    stopSequence: number;
 };
