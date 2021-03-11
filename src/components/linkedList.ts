@@ -144,15 +144,4 @@ class GenericLinkedList<T> implements LinkedList<T> {
     public pop() {
         this.remove(this.length - 1);
     }
-
-    public getLog() {
-        let currentNode = this.head;
-        let currentIndex = 0;
-
-        while (currentNode !== null) {
-            console.log(`Index ${currentIndex}: ${currentNode.value}`);
-            currentNode = currentNode.next;
-            currentIndex += 1;
-        }
-    }
 }
