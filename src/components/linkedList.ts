@@ -20,3 +20,11 @@ interface LinkedList<T> {
     shift(): void;
     pop(): void;
 };
+
+class GenericLinkedListNode<T> implements LinkedListNode<T> {
+    public prev: LinkedListNode<T> | null = null;
+    public next: LinkedListNode<T> | null = null;
+
+    constructor(public value: T) {
+    }
+}
