@@ -77,15 +77,44 @@ class GenericLinkedList<T> implements LinkedList<T> {
     }
 
     public insert(index: number, value: T) {
-        
+        const newNode = new GenericLinkedListNode(value);
+
+        if (this.length > index) {
+            const originalNode = this.at(index);
+            const prevNode = originalNode?.prev as LinkedListNode<T>;
+
+            newNode.prev = prevNode;
+            newNode.next = originalNode;
+
+            if (originalNode) {
+                originalNode.prev = newNode;
+            }
+
+            if (prevNode) {
+                prevNode.next = newNode;
+            }
+        } else {
+            if (this.foot) {
+                this.foot.next = newNode;
+            }
+
+            newNode.prev = this.foot;
+            this.foot = newNode;
+        }
+
+        if (index === 0) {
+            this.head = newNode;
+        }
+
+        this.count += 1;
     }
 
     public unshift(value: T) {
-        
+        this.insert(0, value);
     }
 
     public push(value: T) {
-
+        this.insert(this.length, value);
     }
 
     public remove(index: number) {
@@ -98,5 +127,16 @@ class GenericLinkedList<T> implements LinkedList<T> {
 
     public pop() {
 
+    }
+
+    public getLog() {
+        let currentNode = this.head;
+        let currentIndex = 0;
+
+        while (currentNode !== null) {
+            console.log(`Index ${currentIndex}: ${currentNode.value}`);
+            currentNode = currentNode.next;
+            currentIndex += 1;
+        }
     }
 }
