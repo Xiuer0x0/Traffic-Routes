@@ -118,15 +118,31 @@ class GenericLinkedList<T> implements LinkedList<T> {
     }
 
     public remove(index: number) {
+        const originalNode = this.at(index);
+        const prevNode = originalNode?.prev as LinkedListNode<T> | null;
+        const nextNode = originalNode?.next as LinkedListNode<T> | null;
 
+        if (prevNode) {
+            prevNode.next = nextNode;
+        } else {
+            this.head = nextNode;
+        }
+
+        if (nextNode) {
+            nextNode.prev = prevNode;
+        } else {
+            this.foot = prevNode;
+        }
+
+        this.count -= 1;
     }
 
     public shift() {
-
+        this.remove(0);
     }
 
     public pop() {
-
+        this.remove(this.length - 1);
     }
 
     public getLog() {
