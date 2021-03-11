@@ -15,7 +15,7 @@ interface LinkedList<T> {
     insert(index: number, value: T): void;
     unshift(value: T): void;
     push(value: T): void;
-    
+
     remove(index: number): void;
     shift(): void;
     pop(): void;
@@ -81,7 +81,7 @@ class GenericLinkedList<T> implements LinkedList<T> {
 
         if (this.length > index) {
             const originalNode = this.at(index);
-            const prevNode = originalNode?.prev as LinkedListNode<T>;
+            const prevNode = originalNode?.prev as LinkedListNode<T> | null;
 
             newNode.prev = prevNode;
             newNode.next = originalNode;
