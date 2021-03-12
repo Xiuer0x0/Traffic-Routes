@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { fetchCSV } from "./fetch";
-import * as Bus from "./busData";
+import { BusData } from "./busData";
 
 const sourceUrl = '../../assets/data/roadMap_sample.csv';
 
@@ -12,10 +12,10 @@ export default function fetchBusRoute(url: string = sourceUrl) {
     };
 
     return fetchCSV(url, config)
-        .then(response => response.data as Bus.RouteSource[])
+        .then(response => response.data as BusData.RouteSource[])
         .then(dataSource => filterBusRouteSource(dataSource))
         .then(busRouteClassify => {
-            const busRoutes: Bus.Routes = {};
+            const busRoutes: BusData.Routes = {};
 
             _.forOwn(busRouteClassify, (values, key) => {
                 busRoutes[key] = classifyBusRoute(values);
@@ -25,7 +25,7 @@ export default function fetchBusRoute(url: string = sourceUrl) {
         });
 }
 
-function filterBusRouteSource(busRouteSource: Bus.RouteSource[]): Bus.RoutesFilter {
+function filterBusRouteSource(busRouteSource: BusData.RouteSource[]): BusData.RoutesFilter {
     const busRouteClassify =  _.reduce(busRouteSource, (result, values, index)=> {
         const { SubrouteUID, Direction, StopID, StopSequence } = values;
 
@@ -37,15 +37,15 @@ function filterBusRouteSource(busRouteSource: Bus.RouteSource[]): Bus.RoutesFilt
         });
 
         return result;
-    }, {} as Bus.RoutesFilter);
+    }, {} as BusData.RoutesFilter);
 
     return busRouteClassify;
 }
 
-function classifyBusRoute(routes: Bus.RouteFilter[]): Bus.RouteInfo {
-    const outbound: Bus.ClassifyBusRoute[] = [];
-    const returnTrip: Bus.ClassifyBusRoute[] = [];
-    const cycle: Bus.ClassifyBusRoute[] = [];
+function classifyBusRoute(routes: BusData.RouteFilter[]): BusData.RouteInfo {
+    const outbound: BusData.ClassifyBusRoute[] = [];
+    const returnTrip: BusData.ClassifyBusRoute[] = [];
+    const cycle: BusData.ClassifyBusRoute[] = [];
 
     routes.forEach((value, index) => {
         const { direction, stopID, stopSequence } = value;
@@ -66,10 +66,10 @@ function classifyBusRoute(routes: Bus.RouteFilter[]): Bus.RouteInfo {
         }
     });
 
-    const busRouteInfo: Bus.RouteInfo = {
         outbound,
         returnTrip,
         cycle,
+    const busRouteInfo: BusData.RouteInfo = {
     };
 
     return busRouteInfo;
