@@ -145,3 +145,5 @@ class GenericLinkedList<T> implements LinkedList<T> {
         this.remove(this.length - 1);
     }
 }
+
+export default GenericLinkedList;
