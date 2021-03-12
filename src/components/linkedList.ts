@@ -1,10 +1,10 @@
-interface LinkedListNode<T> {
+export interface LinkedListNode<T> {
     value: T;
     prev: LinkedListNode<T> | null;
     next: LinkedListNode<T> | null;
 };
 
-interface LinkedList<T> {
+export interface LinkedList<T> {
     head: LinkedListNode<T> | null;
     foot: LinkedListNode<T> | null;
 
@@ -21,7 +21,7 @@ interface LinkedList<T> {
     pop(): void;
 };
 
-class GenericLinkedListNode<T> implements LinkedListNode<T> {
+export class GenericLinkedListNode<T> implements LinkedListNode<T> {
     public prev: LinkedListNode<T> | null = null;
     public next: LinkedListNode<T> | null = null;
 
@@ -29,7 +29,7 @@ class GenericLinkedListNode<T> implements LinkedListNode<T> {
     }
 }
 
-class GenericLinkedList<T> implements LinkedList<T> {
+export class GenericLinkedList<T> implements LinkedList<T> {
     public head: LinkedListNode<T> | null = null;
     public foot: LinkedListNode<T> | null = null;
     
@@ -145,5 +145,3 @@ class GenericLinkedList<T> implements LinkedList<T> {
         this.remove(this.length - 1);
     }
 }
-
-export default GenericLinkedList;
