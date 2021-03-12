@@ -14,7 +14,7 @@ export default function fetchBusRoute(url: string = sourceUrl) {
 
     return fetchCSV(url, config)
         .then(response => response.data as BusData.RouteSource[])
-        .then(dataSource => filterBusRouteSource(dataSource))
+        .then(dataSource => filterSource(dataSource))
         .then(busRouteClassify => {
             const busRoutes: BusData.Routes = {};
 
@@ -26,21 +26,26 @@ export default function fetchBusRoute(url: string = sourceUrl) {
         });
 }
 
-function filterBusRouteSource(busRouteSource: BusData.RouteSource[]): BusData.RoutesFilter {
-    const busRouteClassify =  _.reduce(busRouteSource, (result, values, index)=> {
+function filterSource(busRouteSource: BusData.RouteSource[]): BusData.FilterSource {
+    const busRouteClassify =  _.reduce(busRouteSource, (routes, values)=> {
         const { SubrouteUID, Direction, StopID, StopSequence } = values;
-
-        result[SubrouteUID] = result[SubrouteUID] || [];
-        result[SubrouteUID].push({
+        const route = routes[SubrouteUID] || [];
+        const stop: BusData.RouteFilter = {
             direction: Direction,
             stopID: StopID,
             stopSequence: StopSequence,
-        });
+        };
 
-        return result;
-    }, {} as BusData.RoutesFilter);
+        routes[SubrouteUID] = addStopToRoute(route, stop);
+
+        return routes;
+    }, {} as BusData.FilterSource);
 
     return busRouteClassify;
+}
+
+function addStopToRoute<T>(route: T[], stop: T): T[] {
+    return [...route, stop];
 }
 
 function classifyBusRoute(routes: BusData.RouteFilter[]): BusData.RouteDirection {

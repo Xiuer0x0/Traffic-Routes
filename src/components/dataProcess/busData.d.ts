@@ -60,7 +60,7 @@ declare namespace BusData {
         stopSequence: number;
     };
 
-    interface RoutesFilter {
+    interface FilterSource {
         [routeID: string]: RouteFilter[];
     };
 
