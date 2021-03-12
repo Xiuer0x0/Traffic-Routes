@@ -1,4 +1,5 @@
 import { LatLngExpression } from "leaflet";
+import { LinkedList } from "../linkedList";
 
 declare namespace BusData {
     type StopID = number;
@@ -63,17 +64,17 @@ declare namespace BusData {
         [routeID: string]: RouteFilter[];
     };
 
-    interface RouteInfo {
-        outbound: StopID[] | null;
-        returnTrip: StopID[] | null;
-        cycle: StopID[] | null;
+    interface RouteDirection {
+        outbound: LinkedList<RouteDirectionInfo> | null;
+        returnTrip: LinkedList<RouteDirectionInfo> | null;
+        cycle: LinkedList<RouteDirectionInfo> | null;
     };
 
     interface Routes {
-        [routeID: string]: RouteInfo;
+        [routeID: string]: RouteDirection;
     };
 
-    interface ClassifyBusRoute {
+    interface RouteDirectionInfo {
         stopID: StopID;
         stopSequence: number;
     };

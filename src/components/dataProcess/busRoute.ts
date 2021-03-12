@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { fetchCSV } from "./fetch";
 import { BusData } from "./busData";
+import { GenericLinkedList, LinkedList } from '../linkedList';
 
 const sourceUrl = '../../assets/data/roadMap_sample.csv';
 
@@ -42,10 +43,10 @@ function filterBusRouteSource(busRouteSource: BusData.RouteSource[]): BusData.Ro
     return busRouteClassify;
 }
 
-function classifyBusRoute(routes: BusData.RouteFilter[]): BusData.RouteInfo {
-    const outbound: BusData.ClassifyBusRoute[] = [];
-    const returnTrip: BusData.ClassifyBusRoute[] = [];
-    const cycle: BusData.ClassifyBusRoute[] = [];
+function classifyBusRoute(routes: BusData.RouteFilter[]): BusData.RouteDirection {
+    const outbound: BusData.RouteDirectionInfo[] = [];
+    const returnTrip: BusData.RouteDirectionInfo[] = [];
+    const cycle: BusData.RouteDirectionInfo[] = [];
 
     routes.forEach((value, index) => {
         const { direction, stopID, stopSequence } = value;
@@ -66,11 +67,24 @@ function classifyBusRoute(routes: BusData.RouteFilter[]): BusData.RouteInfo {
         }
     });
 
-        outbound,
-        returnTrip,
-        cycle,
-    const busRouteInfo: BusData.RouteInfo = {
+    const busRouteInfo: BusData.RouteDirection = {
+        outbound: sortRouteToList(outbound),
+        returnTrip: sortRouteToList(returnTrip),
+        cycle: sortRouteToList(cycle),
     };
 
     return busRouteInfo;
+}
+
+function sortRouteToList(routes: BusData.RouteDirectionInfo[]): LinkedList<BusData.RouteDirectionInfo> | null {
+    if (!routes.length) {
+        return null;
+    }
+
+    const linkList = new GenericLinkedList<BusData.RouteDirectionInfo>();
+
+    routes.sort((a, b) => a.stopSequence - b.stopSequence)
+        .forEach((value) => linkList.push(value));
+
+    return linkList;
 }
