@@ -15,15 +15,7 @@ export default function fetchBusRoute(url: string = sourceUrl) {
     return fetchCSV(url, config)
         .then(response => response.data as BusData.RouteSource[])
         .then(dataSource => filterSource(dataSource))
-        .then(busRouteClassify => {
-            const busRoutes: BusData.Routes = {};
-
-            _.forOwn(busRouteClassify, (values, key) => {
-                busRoutes[key] = classifyBusRoute(values);
-            });
-
-            return busRoutes;
-        });
+        .then(filterData => getBusRoutesData(filterData));
 }
 
 function filterSource(busRouteSource: BusData.RouteSource[]): BusData.FilterSource {
@@ -48,23 +40,34 @@ function addStopToRoute<T>(route: T[], stop: T): T[] {
     return [...route, stop];
 }
 
-function classifyBusRoute(routes: BusData.RouteFilter[]): BusData.RouteDirection {
+function getBusRoutesData(filterData: BusData.FilterSource): BusData.Routes {
+    const busRoutes: BusData.Routes = {};
+
+    _.forOwn(filterData, (values, key) => {
+        busRoutes[key] = classifyRoute(values);
+    });
+
+    return busRoutes;
+}
+
+function classifyRoute(routes: BusData.RouteFilter[]): BusData.RouteDirection {
     const outbound: BusData.RouteDirectionInfo[] = [];
     const returnTrip: BusData.RouteDirectionInfo[] = [];
     const cycle: BusData.RouteDirectionInfo[] = [];
 
-    routes.forEach((value, index) => {
+    routes.forEach((value) => {
         const { direction, stopID, stopSequence } = value;
+        const routeDirectionInfo: BusData.RouteDirectionInfo = { stopID, stopSequence };
 
         switch (direction) {
             case 0:
-                outbound.push({ stopID, stopSequence });
+                outbound.push(routeDirectionInfo);
                 break;
             case 1:
-                returnTrip.push({ stopID, stopSequence });
+                returnTrip.push(routeDirectionInfo);
                 break;
             case 2:
-                cycle.push({ stopID, stopSequence });
+                cycle.push(routeDirectionInfo);
                 break;
             default:
                 console.warn(`bus direction type not defined: ${direction}`);
@@ -73,15 +76,15 @@ function classifyBusRoute(routes: BusData.RouteFilter[]): BusData.RouteDirection
     });
 
     const busRouteInfo: BusData.RouteDirection = {
-        outbound: sortRouteToList(outbound),
-        returnTrip: sortRouteToList(returnTrip),
-        cycle: sortRouteToList(cycle),
+        outbound: routeToLinkedList(outbound),
+        returnTrip: routeToLinkedList(returnTrip),
+        cycle: routeToLinkedList(cycle),
     };
 
     return busRouteInfo;
 }
 
-function sortRouteToList(routes: BusData.RouteDirectionInfo[]): LinkedList<BusData.RouteDirectionInfo> | null {
+function routeToLinkedList(routes: BusData.RouteDirectionInfo[]): LinkedList<BusData.RouteDirectionInfo> | null {
     if (!routes.length) {
         return null;
     }
