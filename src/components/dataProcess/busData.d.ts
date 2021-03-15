@@ -13,7 +13,7 @@ declare namespace BusData {
 
     interface StopSource {
         Id: StopID;
-        routeID: number;
+        routeId: number;
         address: string;
         goBack: string;
         latitude: string;
@@ -28,7 +28,7 @@ declare namespace BusData {
         vector: string;
     };
 
-    interface RouteSource {
+    interface PathSource {
         Authority: string;
         Direction: number;
         Geohash: string;
@@ -54,14 +54,14 @@ declare namespace BusData {
         VersionID: number;
     };
 
-    interface RouteFilter {
+    interface PathFilter {
         direction: number;
         stopID: StopID;
         stopSequence: number;
     };
 
-    interface FilterSource {
-        [routeID: string]: RouteFilter[];
+    interface FilterPathSource {
+        [routeID: string]: PathFilter[];
     };
 
     interface RouteDirection {
