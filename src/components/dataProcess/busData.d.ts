@@ -12,7 +12,7 @@ declare namespace BusData {
     };
 
     interface StopSource {
-        stopID: StopID;
+        Id: StopID;
         routeID: number;
         address: string;
         goBack: string;

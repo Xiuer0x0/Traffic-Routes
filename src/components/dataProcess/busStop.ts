@@ -8,9 +8,9 @@ export default function fetchBusStop(url: string = sourceUrl) {
     return fetchJSON(url)
         .then(response => response.BusInfo as BusData.StopSource[])
         .then(busStopSource => busStopSource.map(info => {
-            const { stopID, latitude, longitude, nameEn, nameZh } = info;
+            const { Id, latitude, longitude, nameEn, nameZh } = info;
             const busStopInfo: BusData.Stop = {
-                id: stopID,
+                id: Id,
                 latLng: <LatLngExpression>[
                     parseFloat(latitude),
                     parseFloat(longitude),
