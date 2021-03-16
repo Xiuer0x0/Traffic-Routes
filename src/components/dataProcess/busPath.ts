@@ -51,23 +51,30 @@ function getBusPaths(filterData: Bus.FilterPathSource): Bus.Paths {
 }
 
 function classifyPath(routes: Bus.PathFilter[]): Bus.PathDirection {
-    const outbound: Bus.PathSequence[] = [];
-    const returnTrip: Bus.PathSequence[] = [];
-    const cycle: Bus.PathSequence[] = [];
+    enum Direction {
+        outbound = 0,
+        returnTrip,
+        cycle,
+        unknow = 255,
+    };
+
+    let outbound: Bus.PathSequence[] = [];
+    let returnTrip: Bus.PathSequence[] = [];
+    let cycle: Bus.PathSequence[] = [];
 
     routes.forEach((value) => {
         const { direction, stopID, stopSequence } = value;
         const pathSequence: Bus.PathSequence = { stopID, stopSequence };
 
         switch (direction) {
-            case 0:
-                outbound.push(pathSequence);
+            case Direction.outbound:
+                outbound = addStopToPath(outbound, pathSequence);
                 break;
-            case 1:
-                returnTrip.push(pathSequence);
+            case Direction.returnTrip:
+                returnTrip = addStopToPath(returnTrip, pathSequence);
                 break;
-            case 2:
-                cycle.push(pathSequence);
+            case Direction.cycle:
+                cycle = addStopToPath(cycle, pathSequence);
                 break;
             default:
                 console.warn(`bus direction type not defined: ${direction}`);
