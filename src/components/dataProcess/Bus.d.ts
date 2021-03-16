@@ -1,7 +1,7 @@
 import { LatLngExpression } from "leaflet";
 import { LinkedList } from "../linkedList";
 
-declare namespace BusData {
+declare namespace Bus {
     namespace Source {
         /** GetStop.json */
         interface Stop {
@@ -84,7 +84,7 @@ declare namespace BusData {
             /** 資料版本編號 */
             VersionID: number;
         };
-    }
+    };
 
     type StopID = number;
 
@@ -108,13 +108,13 @@ declare namespace BusData {
         [routeID: string]: PathFilter[];
     };
 
-    interface RouteDirection {
+    interface PathDirection {
         outbound: LinkedList<PathSequence> | null;
         returnTrip: LinkedList<PathSequence> | null;
         cycle: LinkedList<PathSequence> | null;
     };
 
-    interface Routes {
-        [routeID: string]: RouteDirection;
+    interface Paths {
+        [routeID: string]: PathDirection;
     };
 };

@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { fetchCSV } from "./fetch";
-import { BusData } from "./busData";
+import { Bus } from "./Bus";
 import { GenericLinkedList, LinkedList } from '../linkedList';
 
 const sourceUrl = '../../assets/data/roadMap_sample.csv';
 
-export default function fetchBusPath(url: string = sourceUrl) {
+export default function fetchBusPaths(url: string = sourceUrl) {
     const config: Papa.ParseConfig = {
         comments: '資料版本',
         header: true,
@@ -13,16 +13,16 @@ export default function fetchBusPath(url: string = sourceUrl) {
     };
 
     return fetchCSV(url, config)
-        .then(response => response.data as BusData.Source.RoadMap[])
+        .then(response => response.data as Bus.Source.RoadMap[])
         .then(dataSource => filterSource(dataSource))
         .then(filterData => getBusRoutesData(filterData));
 }
 
-function filterSource(busRouteSource: BusData.Source.RoadMap[]): BusData.FilterPathSource {
+function filterSource(busRouteSource: Bus.Source.RoadMap[]): Bus.FilterPathSource {
     const busRouteClassify =  _.reduce(busRouteSource, (routes, values) => {
         const { SubrouteUID, Direction, StopID, StopSequence } = values;
         const route = routes[SubrouteUID] || [];
-        const stop: BusData.PathFilter = {
+        const stop: Bus.PathFilter = {
             direction: Direction,
             stopID: StopID,
             stopSequence: StopSequence,
@@ -31,7 +31,7 @@ function filterSource(busRouteSource: BusData.Source.RoadMap[]): BusData.FilterP
         routes[SubrouteUID] = addStopToRoute(route, stop);
 
         return routes;
-    }, {} as BusData.FilterPathSource);
+    }, {} as Bus.FilterPathSource);
 
     return busRouteClassify;
 }
@@ -40,8 +40,8 @@ function addStopToRoute<T>(route: T[], stop: T): T[] {
     return [...route, stop];
 }
 
-function getBusRoutesData(filterData: BusData.FilterPathSource): BusData.Routes {
-    const busRoutes: BusData.Routes = {};
+function getBusRoutesData(filterData: Bus.FilterPathSource): Bus.Paths {
+    const busRoutes: Bus.Paths = {};
 
     _.forOwn(filterData, (values, key) => {
         busRoutes[key] = classifyRoute(values);
@@ -50,14 +50,14 @@ function getBusRoutesData(filterData: BusData.FilterPathSource): BusData.Routes 
     return busRoutes;
 }
 
-function classifyRoute(routes: BusData.PathFilter[]): BusData.RouteDirection {
-    const outbound: BusData.PathSequence[] = [];
-    const returnTrip: BusData.PathSequence[] = [];
-    const cycle: BusData.PathSequence[] = [];
+function classifyRoute(routes: Bus.PathFilter[]): Bus.PathDirection {
+    const outbound: Bus.PathSequence[] = [];
+    const returnTrip: Bus.PathSequence[] = [];
+    const cycle: Bus.PathSequence[] = [];
 
     routes.forEach((value) => {
         const { direction, stopID, stopSequence } = value;
-        const routeDirectionInfo: BusData.PathSequence = { stopID, stopSequence };
+        const routeDirectionInfo: Bus.PathSequence = { stopID, stopSequence };
 
         switch (direction) {
             case 0:
@@ -75,7 +75,7 @@ function classifyRoute(routes: BusData.PathFilter[]): BusData.RouteDirection {
         }
     });
 
-    const busRouteInfo: BusData.RouteDirection = {
+    const busRouteInfo: Bus.PathDirection = {
         outbound: routeToLinkedList(outbound),
         returnTrip: routeToLinkedList(returnTrip),
         cycle: routeToLinkedList(cycle),
@@ -84,12 +84,12 @@ function classifyRoute(routes: BusData.PathFilter[]): BusData.RouteDirection {
     return busRouteInfo;
 }
 
-function routeToLinkedList(routes: BusData.PathSequence[]): LinkedList<BusData.PathSequence> | null {
+function routeToLinkedList(routes: Bus.PathSequence[]): LinkedList<Bus.PathSequence> | null {
     if (!routes.length) {
         return null;
     }
 
-    const linkList = new GenericLinkedList<BusData.PathSequence>();
+    const linkList = new GenericLinkedList<Bus.PathSequence>();
 
     routes.sort((a, b) => a.stopSequence - b.stopSequence)
         .forEach((value) => linkList.push(value));

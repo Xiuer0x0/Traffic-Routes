@@ -1,4 +1,4 @@
-import { BusData } from './busData';
+import { Bus } from './busData';
 import { LatLngExpression } from "leaflet";
 import { fetchJSON } from './fetch';
 
@@ -6,10 +6,10 @@ const sourceUrl = '../../assets/data/GetStop.json';
 
 export default function fetchBusStop(url: string = sourceUrl) {
     return fetchJSON(url)
-        .then(response => response.BusInfo as BusData.Source.Stop[])
+        .then(response => response.BusInfo as Bus.Source.Stop[])
         .then(busStopSource => busStopSource.map(info => {
             const { Id, latitude, longitude, nameEn, nameZh } = info;
-            const busStopInfo: BusData.Stop = {
+            const busStopInfo: Bus.Stop = {
                 id: Id,
                 latLng: <LatLngExpression>[
                     parseFloat(latitude),
