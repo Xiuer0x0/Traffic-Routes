@@ -84,6 +84,84 @@ declare namespace Bus {
             /** 資料版本編號 */
             VersionID: number;
         };
+
+        /** GetRoute.json */
+        interface Route {
+            /** 路線代碼 */
+            Id: number;
+            /** 業者代碼 */
+            providerId: number;
+            /** 業者中文名稱 */
+            providerName: string;
+            /** 中文名稱 */
+            nameZh: string;
+            /** 英文名稱 */
+            nameEn: string;
+            /** 路線別名 */
+            aliasName: string;
+            /** 所屬附屬路線 ID */
+            pathAttributeId: number;
+            /** 所屬附屬路線中文名稱 */
+            pathAttributeName: string;
+            /** 所屬附屬路線英文名稱 */
+            pathAttributeEname: string;
+            /** 建制時間，分為 1：1 期、2：2 期、3：3 期、9：非動態資料、10：北縣 */
+            buildPeriod: string;
+            /** '去程第 1 站' 起站中文名稱 */
+            departureZh: string;
+            /** '去程第 1 站' 起站英文名稱 */
+            departureEn: string;
+            /** 回程第 1 站' 訖站中文名稱 */
+            destinationZh: string;
+            /** 回程第 1 站' 訖站英文名稱 */
+            destinationEn: string;
+            /** 核定總班次 */
+            realSequence: string;
+            /** 總往返里程(公里/全程) */
+            distance: string;
+            /** 站牌顯示時使用，去程第一班發車時間(hhmm) */
+            goFirstBusTime: string;
+            /** 站牌顯示時使用，回程第一班發車時間(hhmm) */
+            backFirstBusTime: string;
+            /** 站牌顯示時使用，去程最後一班發車時間(hhmm) */
+            goLastBusTime: string;
+            /** 站牌顯示時使用，回程最後一班發車時間(hhmm) */
+            backLastBusTime: string;
+            /** 平日頭末班描述 */
+            busTimeDesc: string;
+            /** 站牌顯示時使用，尖峰時段發車間隔(hhmm OR mm) */
+            peakHeadway: string;
+            /** 站牌顯示時使用，離峰時段發車間隔(hhmm OR mm) */
+            offPeakHeadway: string;
+            /** 平日發車間距描述 */
+            headwayDesc: string;
+            /** 假日站牌顯示時使用，去程第一班發車時間(HHmm) */
+            holidayGoFirstBusTime: string;
+            /** 假日站牌顯示時使用，回程第一班發車時間(HHmm) */
+            holidayBackFirstBusTime: string;
+            /** 假日站牌顯示時使用，去程最後一班發車時間(HHmm) */
+            holidayGoLastBusTime: string;
+            /** 假日站牌顯示時使用，回程最後一班發車時間(HHmm) */
+            holidayBackLastBusTime: string;
+            /** 假日頭末班描述 */
+            holidayBusTimeDesc: string;
+            /** 假日站牌顯示時使用，尖峰時段發車間隔(mmmm OR mm) */
+            holidayPeakHeadway: string;
+            /** 假日站牌顯示時使用，離峰時段發車間隔(mmmm OR mm) */
+            holidayOffPeakHeadway: string;
+            /** 假日發車間距描述 */
+            holidayHeadwayDesc: string;
+            /** 分段緩衝區(中文) */
+            segmentBufferZh: string;
+            /** 分段緩衝區(英文) */
+            segmentBufferEn: string;
+            /** 票價描述(中文) */
+            ticketPriceDescriptionZh: string;
+            /** 票價描述(英文) */
+            ticketPriceDescriptionEn: string;
+            /** 路線簡圖 URL */
+            roadMapUrl: string;
+        }
     };
 
     type StopID = number;
@@ -117,4 +195,18 @@ declare namespace Bus {
     interface Paths {
         [routeID: string]: PathDirection;
     };
+
+    interface Route {
+        pathID: number;
+        pathName: i18n;
+        providerID: number;
+        providerName: string;
+        departure: i18n;
+        destination: i18n;
+        goFirstBusTime: string;
+        backFirstBusTime: string;
+        goLastBusTime: string;
+        backLastBusTime: string;
+        roadMapURL: string;
+    }
 };
