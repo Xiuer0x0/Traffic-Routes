@@ -15,59 +15,59 @@ export default function fetchBusPaths(url: string = sourceUrl) {
     return fetchCSV(url, config)
         .then(response => response.data as Bus.Source.RoadMap[])
         .then(dataSource => filterSource(dataSource))
-        .then(filterData => getBusRoutesData(filterData));
+        .then(filterData => getBusPaths(filterData));
 }
 
-function filterSource(busRouteSource: Bus.Source.RoadMap[]): Bus.FilterPathSource {
-    const busRouteClassify =  _.reduce(busRouteSource, (routes, values) => {
+function filterSource(pathSource: Bus.Source.RoadMap[]): Bus.FilterPathSource {
+    const pathClassify =  _.reduce(pathSource, (paths, values) => {
         const { SubrouteUID, Direction, StopID, StopSequence } = values;
-        const route = routes[SubrouteUID] || [];
+        const path = paths[SubrouteUID] || [];
         const stop: Bus.PathFilter = {
             direction: Direction,
             stopID: StopID,
             stopSequence: StopSequence,
         };
 
-        routes[SubrouteUID] = addStopToRoute(route, stop);
+        paths[SubrouteUID] = addStopToPath(path, stop);
 
-        return routes;
+        return paths;
     }, {} as Bus.FilterPathSource);
 
-    return busRouteClassify;
+    return pathClassify;
 }
 
-function addStopToRoute<T>(route: T[], stop: T): T[] {
-    return [...route, stop];
+function addStopToPath<T>(path: T[], stop: T): T[] {
+    return [...path, stop];
 }
 
-function getBusRoutesData(filterData: Bus.FilterPathSource): Bus.Paths {
+function getBusPaths(filterData: Bus.FilterPathSource): Bus.Paths {
     const busRoutes: Bus.Paths = {};
 
     _.forOwn(filterData, (values, key) => {
-        busRoutes[key] = classifyRoute(values);
+        busRoutes[key] = classifyPath(values);
     });
 
     return busRoutes;
 }
 
-function classifyRoute(routes: Bus.PathFilter[]): Bus.PathDirection {
+function classifyPath(routes: Bus.PathFilter[]): Bus.PathDirection {
     const outbound: Bus.PathSequence[] = [];
     const returnTrip: Bus.PathSequence[] = [];
     const cycle: Bus.PathSequence[] = [];
 
     routes.forEach((value) => {
         const { direction, stopID, stopSequence } = value;
-        const routeDirectionInfo: Bus.PathSequence = { stopID, stopSequence };
+        const pathSequence: Bus.PathSequence = { stopID, stopSequence };
 
         switch (direction) {
             case 0:
-                outbound.push(routeDirectionInfo);
+                outbound.push(pathSequence);
                 break;
             case 1:
-                returnTrip.push(routeDirectionInfo);
+                returnTrip.push(pathSequence);
                 break;
             case 2:
-                cycle.push(routeDirectionInfo);
+                cycle.push(pathSequence);
                 break;
             default:
                 console.warn(`bus direction type not defined: ${direction}`);
@@ -76,15 +76,15 @@ function classifyRoute(routes: Bus.PathFilter[]): Bus.PathDirection {
     });
 
     const busRouteInfo: Bus.PathDirection = {
-        outbound: routeToLinkedList(outbound),
-        returnTrip: routeToLinkedList(returnTrip),
-        cycle: routeToLinkedList(cycle),
+        outbound: pathToLinkedList(outbound),
+        returnTrip: pathToLinkedList(returnTrip),
+        cycle: pathToLinkedList(cycle),
     };
 
     return busRouteInfo;
 }
 
-function routeToLinkedList(routes: Bus.PathSequence[]): LinkedList<Bus.PathSequence> | null {
+function pathToLinkedList(routes: Bus.PathSequence[]): LinkedList<Bus.PathSequence> | null {
     if (!routes.length) {
         return null;
     }
