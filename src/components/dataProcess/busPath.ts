@@ -13,12 +13,12 @@ export default function fetchBusPath(url: string = sourceUrl) {
     };
 
     return fetchCSV(url, config)
-        .then(response => response.data as BusData.PathSource[])
+        .then(response => response.data as BusData.Source.RoadMap[])
         .then(dataSource => filterSource(dataSource))
         .then(filterData => getBusRoutesData(filterData));
 }
 
-function filterSource(busRouteSource: BusData.PathSource[]): BusData.FilterPathSource {
+function filterSource(busRouteSource: BusData.Source.RoadMap[]): BusData.FilterPathSource {
     const busRouteClassify =  _.reduce(busRouteSource, (routes, values) => {
         const { SubrouteUID, Direction, StopID, StopSequence } = values;
         const route = routes[SubrouteUID] || [];
