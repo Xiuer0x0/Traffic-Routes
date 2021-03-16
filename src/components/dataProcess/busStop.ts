@@ -1,4 +1,4 @@
-import { Bus } from './busData';
+import { Bus } from './Bus';
 import { LatLngExpression } from "leaflet";
 import { fetchJSON } from './fetch';
 
