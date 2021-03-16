@@ -6,7 +6,7 @@ const sourceUrl = '../../assets/data/GetStop.json';
 
 export default function fetchBusStop(url: string = sourceUrl) {
     return fetchJSON(url)
-        .then(response => response.BusInfo as BusData.StopSource[])
+        .then(response => response.BusInfo as BusData.Source.Stop[])
         .then(busStopSource => busStopSource.map(info => {
             const { Id, latitude, longitude, nameEn, nameZh } = info;
             const busStopInfo: BusData.Stop = {

@@ -13,12 +13,12 @@ export default function fetchBusPath(url: string = sourceUrl) {
     };
 
     return fetchCSV(url, config)
-        .then(response => response.data as BusData.PathSource[])
+        .then(response => response.data as BusData.Source.RoadMap[])
         .then(dataSource => filterSource(dataSource))
         .then(filterData => getBusRoutesData(filterData));
 }
 
-function filterSource(busRouteSource: BusData.PathSource[]): BusData.FilterPathSource {
+function filterSource(busRouteSource: BusData.Source.RoadMap[]): BusData.FilterPathSource {
     const busRouteClassify =  _.reduce(busRouteSource, (routes, values) => {
         const { SubrouteUID, Direction, StopID, StopSequence } = values;
         const route = routes[SubrouteUID] || [];
@@ -51,13 +51,13 @@ function getBusRoutesData(filterData: BusData.FilterPathSource): BusData.Routes 
 }
 
 function classifyRoute(routes: BusData.PathFilter[]): BusData.RouteDirection {
-    const outbound: BusData.RouteDirectionInfo[] = [];
-    const returnTrip: BusData.RouteDirectionInfo[] = [];
-    const cycle: BusData.RouteDirectionInfo[] = [];
+    const outbound: BusData.PathSequence[] = [];
+    const returnTrip: BusData.PathSequence[] = [];
+    const cycle: BusData.PathSequence[] = [];
 
     routes.forEach((value) => {
         const { direction, stopID, stopSequence } = value;
-        const routeDirectionInfo: BusData.RouteDirectionInfo = { stopID, stopSequence };
+        const routeDirectionInfo: BusData.PathSequence = { stopID, stopSequence };
 
         switch (direction) {
             case 0:
@@ -84,12 +84,12 @@ function classifyRoute(routes: BusData.PathFilter[]): BusData.RouteDirection {
     return busRouteInfo;
 }
 
-function routeToLinkedList(routes: BusData.RouteDirectionInfo[]): LinkedList<BusData.RouteDirectionInfo> | null {
+function routeToLinkedList(routes: BusData.PathSequence[]): LinkedList<BusData.PathSequence> | null {
     if (!routes.length) {
         return null;
     }
 
-    const linkList = new GenericLinkedList<BusData.RouteDirectionInfo>();
+    const linkList = new GenericLinkedList<BusData.PathSequence>();
 
     routes.sort((a, b) => a.stopSequence - b.stopSequence)
         .forEach((value) => linkList.push(value));
