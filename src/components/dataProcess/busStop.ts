@@ -3,46 +3,44 @@ import { Bus } from './Bus';
 import { LatLngExpression } from "leaflet";
 import { fetchJSON } from './fetch';
 
-const sourceUrl = '../../assets/data/GetStop.json';
-
-export default function fetchBusStop(url: string = sourceUrl) {
+export default function fetchBusStop(url: string, cityCode: Bus.CityCode) {
     return fetchJSON(url)
         .then(response => response.BusInfo as Bus.Source.Stop[])
-        .then(dataSource => filterSource(dataSource));
+        .then(dataSource => filterSource(dataSource, cityCode));
 };
 
-function filterSource(source: Bus.Source.Stop[]): Bus.Stop[] {
+function filterSource(source: Bus.Source.Stop[], cityCode: Bus.CityCode): Bus.Stop[] {
     const filterStops: Bus.FilterStopSource = {};
 
-    _.reduce(source, getStops, filterStops);
+    _.reduce(source, (result, values) => {
+        const { stopLocationId, routeId } = values;
+        const routeUID = `${cityCode}${routeId}`;
+        const stopID = stopLocationId.toString();
+        let stop = result[stopID];
+    
+        if (stop) {
+            stop.routeUIDs = addRouteToList(stop.routeUIDs, routeUID);
+        } else {
+            stop = getStopInfo(values, cityCode);
+        }
+    
+        result[stopID] = stop;
+        
+        return result;
+    }, filterStops);
     
     return Object.values(filterStops);
-}
-
-function getStops(result: Bus.FilterStopSource, values: Bus.Source.Stop): Bus.FilterStopSource {
-    const { stopLocationId, routeId } = values;
-    const stopID = stopLocationId.toString();
-    let stop = result[stopID];
-
-    if (stop) {
-        stop.routeIDs = addRouteToList(stop.routeIDs, routeId);
-    } else {
-        stop = getStopInfo(values);
-    }
-
-    result[stopID] = stop;
-    
-    return result;
 }
 
 function addRouteToList<T>(list: T[], route: T): T[] {
     return [...list, route];
 }
 
-function getStopInfo(source: Bus.Source.Stop): Bus.Stop {
-    const { stopLocationId, nameEn, nameZh, latitude, longitude, routeId } = source;
+function getStopInfo(source: Bus.Source.Stop, cityCode: Bus.CityCode): Bus.Stop {
+    const { Id, nameEn, nameZh, latitude, longitude, routeId } = source;
+    const routeUID = `${cityCode}${routeId}`;
     const stop: Bus.Stop = {
-        id: stopLocationId,
+        UID: `${cityCode}${Id}`,
         name: {
             en: nameEn,
             zhTW: nameZh,
@@ -51,7 +49,7 @@ function getStopInfo(source: Bus.Source.Stop): Bus.Stop {
             parseFloat(latitude),
             parseFloat(longitude),
         ],
-        routeIDs: [routeId],
+        routeUIDs: [routeUID],
     };
 
     return stop;

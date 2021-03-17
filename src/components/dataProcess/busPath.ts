@@ -3,9 +3,7 @@ import { fetchCSV } from "./fetch";
 import { Bus } from "./Bus";
 import { GenericLinkedList, LinkedList } from '../linkedList';
 
-const sourceUrl = '../../assets/data/roadMap_sample.csv';
-
-export default function fetchBusPaths(url: string = sourceUrl) {
+export default function fetchBusPaths(url: string) {
     const config: Papa.ParseConfig = {
         comments: '資料版本',
         header: true,
@@ -20,11 +18,11 @@ export default function fetchBusPaths(url: string = sourceUrl) {
 
 function filterSource(pathSource: Bus.Source.RoadMap[]): Bus.FilterPathSource {
     const pathClassify =  _.reduce(pathSource, (paths, values) => {
-        const { SubrouteUID, Direction, StopID, StopSequence } = values;
+        const { SubrouteUID, Direction, StopUID, StopSequence } = values;
         const path = paths[SubrouteUID] || [];
         const stop: Bus.PathFilter = {
             direction: Direction,
-            stopID: StopID,
+            stopUID: StopUID,
             stopSequence: StopSequence,
         };
 
@@ -63,8 +61,8 @@ function classifyPath(routes: Bus.PathFilter[]): Bus.PathDirection {
     let cycle: Bus.PathSequence[] = [];
 
     routes.forEach((value) => {
-        const { direction, stopID, stopSequence } = value;
-        const pathSequence: Bus.PathSequence = { stopID, stopSequence };
+        const { direction, stopUID: stopID, stopSequence } = value;
+        const pathSequence: Bus.PathSequence = { stopUID: stopID, stopSequence };
 
         switch (direction) {
             case Direction.outbound:

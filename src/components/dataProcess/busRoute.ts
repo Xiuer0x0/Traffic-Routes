@@ -2,16 +2,14 @@ import _ from 'lodash';
 import { Bus } from "./Bus";
 import { fetchJSON } from "./fetch";
 
-const sourceURL = '../../assets/data/GetRoute.json';
-
-export default function fetchBusRoutes(url: string = sourceURL) {
+export default function fetchBusRoutes(url: string, cityCode: Bus.CityCode) {
 
     return fetchJSON(url)
         .then(response => response.BusInfo as Bus.Source.Route[])
-        .then(dataSource => filterSource(dataSource));
+        .then(dataSource => filterSource(dataSource, cityCode));
 }
 
-function filterSource(data: Bus.Source.Route[]): Bus.Route[] {
+function filterSource(data: Bus.Source.Route[], cityCode: Bus.CityCode): Bus.Route[] {
     const routes = _.reduce(data, (result, values) => {
         const { 
             Id,
@@ -32,7 +30,7 @@ function filterSource(data: Bus.Source.Route[]): Bus.Route[] {
         } = values;
 
         const route: Bus.Route = {
-            index: Id,
+            UID: `${cityCode}${Id}`,
             pathID: pathAttributeId,
             pathName: { 
                 en: pathAttributeEname,

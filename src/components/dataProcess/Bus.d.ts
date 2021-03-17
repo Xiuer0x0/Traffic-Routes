@@ -164,13 +164,14 @@ declare namespace Bus {
         };
     };
 
-    type StopID = number;
+    type CityCode = string;
+    type StopUID = string;
 
     interface Stop {
-        id: StopID;
+        UID: StopUID;
         latLng: LatLngExpression;
         name: i18n;
-        routeIDs: number[];
+        routeUIDs: string[];
     };
 
     interface FilterStopSource {
@@ -178,7 +179,7 @@ declare namespace Bus {
     };
 
     interface PathSequence {
-        stopID: StopID;
+        stopUID: StopUID;
         stopSequence: number;
     };
 
@@ -201,7 +202,7 @@ declare namespace Bus {
     };
 
     interface Route {
-        index: number;
+        UID: string;
         pathID: number;
         pathName: i18n;
         providerID: number;
