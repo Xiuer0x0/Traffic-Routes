@@ -201,6 +201,7 @@ declare namespace Bus {
     };
 
     interface Route {
+        index: number;
         pathID: number;
         pathName: i18n;
         providerID: number;

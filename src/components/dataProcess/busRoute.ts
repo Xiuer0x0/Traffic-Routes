@@ -14,6 +14,7 @@ export default function fetchBusRoutes(url: string = sourceURL) {
 function filterSource(data: Bus.Source.Route[]): Bus.Route[] {
     const routes = _.reduce(data, (result, values) => {
         const { 
+            Id,
             providerId,
             providerName,
             pathAttributeId,
@@ -31,6 +32,7 @@ function filterSource(data: Bus.Source.Route[]): Bus.Route[] {
         } = values;
 
         const route: Bus.Route = {
+            index: Id,
             pathID: pathAttributeId,
             pathName: { 
                 en: pathAttributeEname,
