@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { Bus } from './Bus';
 import { LatLngExpression } from "leaflet";
 import { fetchJSON } from './fetch';
@@ -11,13 +12,37 @@ export default function fetchBusStop(url: string = sourceUrl) {
 };
 
 function filterSource(source: Bus.Source.Stop[]): Bus.Stop[] {
-    return source.map(data => getBusStopInfo(data));
+    const filterStops: Bus.FilterStopSource = {};
+
+    _.reduce(source, getStops, filterStops);
+    
+    return Object.values(filterStops);
 }
 
-function getBusStopInfo(source: Bus.Source.Stop): Bus.Stop {
-    const { Id, latitude, longitude, nameEn, nameZh } = source;
-    const busStopInfo: Bus.Stop = {
-        id: Id,
+function getStops(result: Bus.FilterStopSource, values: Bus.Source.Stop): Bus.FilterStopSource {
+    const { stopLocationId, routeId } = values;
+    const stopID = stopLocationId.toString();
+    let stop = result[stopID];
+
+    if (stop) {
+        stop.routeIDs = addRouteToList(stop.routeIDs, routeId);
+    } else {
+        stop = getStopInfo(values);
+    }
+
+    result[stopID] = stop;
+    
+    return result;
+}
+
+function addRouteToList<T>(list: T[], route: T): T[] {
+    return [...list, route];
+}
+
+function getStopInfo(source: Bus.Source.Stop): Bus.Stop {
+    const { stopLocationId, nameEn, nameZh, latitude, longitude, routeId } = source;
+    const stop: Bus.Stop = {
+        id: stopLocationId,
         name: {
             en: nameEn,
             zhTW: nameZh,
@@ -26,7 +51,8 @@ function getBusStopInfo(source: Bus.Source.Stop): Bus.Stop {
             parseFloat(latitude),
             parseFloat(longitude),
         ],
+        routeIDs: [routeId],
     };
 
-    return busStopInfo;
+    return stop;
 }

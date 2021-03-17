@@ -170,6 +170,11 @@ declare namespace Bus {
         id: StopID;
         latLng: LatLngExpression;
         name: i18n;
+        routeIDs: number[];
+    };
+
+    interface FilterStopSource {
+        [stopID: string]: Bus.Stop;
     };
 
     interface PathSequence {
