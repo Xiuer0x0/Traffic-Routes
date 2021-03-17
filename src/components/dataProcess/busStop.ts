@@ -11,12 +11,14 @@ export default function fetchBusStop(url: string = sourceUrl) {
             const { Id, latitude, longitude, nameEn, nameZh } = info;
             const busStopInfo: Bus.Stop = {
                 id: Id,
+                name: {
+                    en: nameEn,
+                    zhTW: nameZh,
+                },
                 latLng: <LatLngExpression>[
                     parseFloat(latitude),
                     parseFloat(longitude),
                 ],
-                nameEn,
-                nameZh,
             };
 
             return busStopInfo;

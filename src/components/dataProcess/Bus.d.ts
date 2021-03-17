@@ -161,7 +161,7 @@ declare namespace Bus {
             ticketPriceDescriptionEn: string;
             /** 路線簡圖 URL */
             roadMapUrl: string;
-        }
+        };
     };
 
     type StopID = number;
@@ -169,8 +169,7 @@ declare namespace Bus {
     interface Stop {
         id: StopID;
         latLng: LatLngExpression;
-        nameEn: string;
-        nameZh: string;
+        name: i18n;
     };
 
     interface PathSequence {
@@ -208,5 +207,5 @@ declare namespace Bus {
         goLastBusTime: string;
         backLastBusTime: string;
         roadMapURL: string;
-    }
+    };
 };
