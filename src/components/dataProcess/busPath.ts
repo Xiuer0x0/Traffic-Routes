@@ -96,10 +96,10 @@ function pathToLinkedList(routes: Bus.PathSequence[]): LinkedList<Bus.PathSequen
         return null;
     }
 
+    const sortRoutes = _.sortBy(routes, (obj) => obj.stopSequence);
     const linkList = new GenericLinkedList<Bus.PathSequence>();
 
-    routes.sort((a, b) => a.stopSequence - b.stopSequence)
-        .forEach((value) => linkList.push(value));
+    sortRoutes.forEach((value) => linkList.push(value));
 
     return linkList;
 }
