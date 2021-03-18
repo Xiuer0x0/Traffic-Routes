@@ -220,4 +220,21 @@ declare namespace Bus {
         backLastBusTime: string;
         roadMapURL: string;
     };
+
+    interface DataSource {
+        stops: Stop[];
+        routes: Route[];
+        paths: Path[];
+    };
+
+    interface Data {
+        readonly stops: Stop[];
+        readonly routes: Route[];
+        readonly paths: Path[];
+
+        initialize(): Promise;
+        getStop(stopUID: string): Stop | null;
+        getRoute(routeUID: string): Route | null;
+        getPath(pathUID: string): Path | null;
+    };
 };
