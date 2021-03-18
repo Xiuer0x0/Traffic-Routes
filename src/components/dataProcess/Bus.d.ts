@@ -167,8 +167,11 @@ declare namespace Bus {
     type CityCode = string;
     type StopUID = string;
 
-    interface Stop {
-        UID: StopUID;
+    interface DataIndex {
+        UID: string;
+    };
+
+    interface Stop extends DataIndex {
         latLng: LatLngExpression;
         name: i18n;
         routeUIDs: string[];
@@ -197,12 +200,14 @@ declare namespace Bus {
         cycle: LinkedList<PathSequence> | null;
     };
 
+    interface Path extends DataIndex, PathDirection {
+    };
+
     interface Paths {
         [routeID: string]: PathDirection;
     };
 
-    interface Route {
-        UID: string;
+    interface Route extends DataIndex {
         pathID: number;
         pathName: i18n;
         providerID: number;

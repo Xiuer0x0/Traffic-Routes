@@ -26,7 +26,7 @@ function filterSource(pathSource: Bus.Source.RoadMap[]): Bus.FilterPathSource {
             stopSequence: StopSequence,
         };
 
-        paths[SubrouteUID] = addStopToPath(path, stop);
+        paths[SubrouteUID] = addDataToArray(path, stop);
 
         return paths;
     }, {} as Bus.FilterPathSource);
@@ -34,18 +34,23 @@ function filterSource(pathSource: Bus.Source.RoadMap[]): Bus.FilterPathSource {
     return pathClassify;
 }
 
-function addStopToPath<T>(path: T[], stop: T): T[] {
-    return [...path, stop];
-}
-
-function getBusPaths(filterData: Bus.FilterPathSource): Bus.Paths {
-    const busRoutes: Bus.Paths = {};
+function getBusPaths(filterData: Bus.FilterPathSource): Bus.Path[] {
+    let busPaths: Bus.Path[] = [];
 
     _.forOwn(filterData, (values, key) => {
-        busRoutes[key] = classifyPath(values);
+        const path: Bus.Path = {
+            UID: key,
+            ...classifyPath(values),
+        };
+
+        busPaths = addDataToArray(busPaths, path);
     });
 
-    return busRoutes;
+    return busPaths;
+}
+
+function addDataToArray<T>(array: T[], data: T): T[] {
+    return [...array, data];
 }
 
 function classifyPath(routes: Bus.PathFilter[]): Bus.PathDirection {
@@ -66,13 +71,13 @@ function classifyPath(routes: Bus.PathFilter[]): Bus.PathDirection {
 
         switch (direction) {
             case Direction.outbound:
-                outbound = addStopToPath(outbound, pathSequence);
+                outbound = addDataToArray(outbound, pathSequence);
                 break;
             case Direction.returnTrip:
-                returnTrip = addStopToPath(returnTrip, pathSequence);
+                returnTrip = addDataToArray(returnTrip, pathSequence);
                 break;
             case Direction.cycle:
-                cycle = addStopToPath(cycle, pathSequence);
+                cycle = addDataToArray(cycle, pathSequence);
                 break;
             default:
                 console.warn(`bus direction type not defined: ${direction}`);
