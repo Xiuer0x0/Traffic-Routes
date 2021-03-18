@@ -37,10 +37,10 @@ function addRouteToList<T>(list: T[], route: T): T[] {
 }
 
 function getStopInfo(source: Bus.Source.Stop, cityCode: Bus.CityCode): Bus.Stop {
-    const { Id, nameEn, nameZh, latitude, longitude, routeId } = source;
+    const { stopLocationId, nameEn, nameZh, latitude, longitude, routeId } = source;
     const routeUID = `${cityCode}${routeId}`;
     const stop: Bus.Stop = {
-        UID: `${cityCode}${Id}`,
+        UID: `${cityCode}${stopLocationId}`,
         name: {
             en: nameEn,
             zhTW: nameZh,

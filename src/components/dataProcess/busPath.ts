@@ -18,11 +18,11 @@ export default function fetchBusPaths(url: string) {
 
 function filterSource(pathSource: Bus.Source.RoadMap[]): Bus.FilterPathSource {
     const pathClassify =  _.reduce(pathSource, (paths, values) => {
-        const { SubrouteUID, Direction, StopUID, StopSequence } = values;
+        const { SubrouteUID, Direction, StationUID, StopSequence } = values;
         const path = paths[SubrouteUID] || [];
         const stop: Bus.PathFilter = {
             direction: Direction,
-            stopUID: StopUID,
+            stopUID: StationUID,
             stopSequence: StopSequence,
         };
 
