@@ -22,4 +22,14 @@ declare namespace CustomMap {
         addMarkers(markers: Marker[]): void;
         clear(): void;
     };
+
+    interface MapUtitity {
+        readonly map: L.Map;
+
+        flyTo(latLng: L.LatLngExpression, options?: ZoomPanOptions): void;
+    };
+
+    interface ZoomPanOptions extends L.ZoomPanOptions {
+        zoom?: number | undefined;
+    };
 }
