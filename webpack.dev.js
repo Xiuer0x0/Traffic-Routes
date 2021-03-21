@@ -23,7 +23,11 @@ module.exports = webpackMerge(commonConfig, {
         port: service.port,
         hot: true,
         open: {
-            app: ['chrome', '--incognito', '--other-flag'],
+            app: [
+                'chrome',
+                '--user-data-dir=./chromeTempDevUser',
+                '--incognito',
+            ],
         },
         // openPage: [service.url, './test.html'],
         // historyApiFallback: {
