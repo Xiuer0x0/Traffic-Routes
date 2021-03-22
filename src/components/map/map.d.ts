@@ -11,7 +11,7 @@ declare namespace CustomMap {
 
     interface Marker {
         marker: L.Marker;
-        bindTooltip(content: string): void;
+        // bindTooltip(content: string): void;
     };
 
     interface MarkerLayer {
