@@ -232,7 +232,6 @@ declare namespace Bus {
         readonly routes: Route[];
         readonly paths: Path[];
 
-        initialize(): Promise;
         getStop(stopUID: string): Stop | null;
         getRoute(routeUID: string): Route | null;
         getPath(pathUID: string): Path | null;

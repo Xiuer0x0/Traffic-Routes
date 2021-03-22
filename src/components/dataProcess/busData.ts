@@ -6,11 +6,32 @@ import fetchBusRoutes from './busRoute';
 import { cityCodes } from "./cityCodes";
 
 export default class BusData implements Bus.Data {
-    private source: Bus.DataSource = {
-        stops: [],
-        routes: [],
-        paths: [],
-    };
+    private static instance: Bus.Data;
+
+    private constructor(private source: Bus.DataSource) {
+    }
+
+    private static async request() {
+        const response = await requestBusData();
+        const [ stopsSource, routesSource, pathsSource ] = response;
+        const source: Bus.DataSource = {
+            stops: [...stopsSource],
+            routes: [...routesSource],
+            paths: [...pathsSource],
+        };
+
+        return source;
+    }
+
+    static async initialize() {
+        if (!this.instance) {
+            const dataSource = await BusData.request();
+
+            this.instance = new BusData(dataSource);
+        }
+
+        return this.instance;
+    }
 
     get stops() {
         return [...this.source.stops];
@@ -22,17 +43,6 @@ export default class BusData implements Bus.Data {
 
     get paths() {
         return [...this.source.paths];
-    }
-
-    async initialize() {
-        const response = await requestBusData();
-        const [ stopsSource, routesSource, pathsSource ] = response;
-
-        this.source = {
-            stops: [...stopsSource],
-            routes: [...routesSource],
-            paths: [...pathsSource],
-        };
     }
 
     private findUIDData<T extends Bus.DataIndex>(source: T[], UID: string): T | null {
