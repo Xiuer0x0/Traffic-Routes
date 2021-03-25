@@ -16,7 +16,7 @@ export default class RouteSearch {
     }
 
     static create($container: HTMLElement, source: Bus.Route[]) {
-        return new RouteSearch($container, source);
+        return new RouteSearch($container, [...source]);
     }
 
     private drawUI() {
@@ -32,34 +32,34 @@ export default class RouteSearch {
     }
 
     private createWrapper(): HTMLDivElement {
-        const $wrap = document.createElement('div');
-    
-        $wrap.className = 'route-search';
-    
-        return $wrap;
+        const $div = document.createElement('div');
+
+        $div.className = 'route-search';
+
+        return $div;
     }
 
     private createSearchInput(): HTMLInputElement {
-        const $searchInput = document.createElement('input');
-    
-        $searchInput.id = 'SearchInput';
-        $searchInput.className = 'search-input';
-        $searchInput.type = 'text';
-        $searchInput.addEventListener('keyup', (e) => {
-            const value = $searchInput.value;
+        const $input = document.createElement('input');
+
+        $input.id = 'SearchInput';
+        $input.className = 'search-input';
+        $input.type = 'text';
+        $input.addEventListener('keyup', (e) => {
+            const value = $input.value;
 
             upgradeRouteList(this.$filterList, this.source, value);
         });
-    
-        return $searchInput;
+
+        return $input;
     }
 
     private createFilterList(): HTMLUListElement {
         const $ul = document.createElement('ul');
-    
+
         $ul.id = 'FilterList';
         $ul.className = 'filter-list';
-    
+
         return $ul;
     }
 }
