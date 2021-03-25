@@ -2,6 +2,7 @@ import L from 'leaflet';
 import { CustomMap } from './map';
 import mapConfig, { MapConfig } from './map.config';
 import MapInitializer from './MapInitializer';
+import MapMarker from './MapMarker';
 import MapMarkerLayer from './MapMarkerLayer';
 import MapUtility from './MapUtility';
 
@@ -25,5 +26,19 @@ export default class MapFacade {
 
     focusCoordinates(lanLng: L.LatLngExpression, options?: CustomMap.ZoomPanOptions) {
         this.mapUtility.flyTo(lanLng, options);
+    }
+
+    drawPin(coordinate: L.LatLngExpression, tooltipTemplete: string = '') {
+        const marker = MapMarker.create(coordinate);
+
+        marker.bindTooltip(tooltipTemplete);
+
+        this.mapMarkerLayer.addMarker(marker);
+    }
+
+    drawPins(coordinates: L.LatLngExpression[], tooltipTemplete: string = '') {
+        coordinates.forEach(latLng => {
+            this.drawPin(latLng, tooltipTemplete);
+        });
     }
 }
