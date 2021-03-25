@@ -1,0 +1,21 @@
+.route-search {
+    $outer-spacing: 10pt;
+
+    position: absolute;
+    right: $outer-spacing;
+    top: $outer-spacing;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, .7);
+    padding: 10pt;
+    border: 2pt;
+
+    .search-input {
+        width: 98%;
+    }
+
+    .filter-list {
+        overflow: hidden;
+        overflow-y: auto;
+        max-height: 85vh;
+    }
+}
