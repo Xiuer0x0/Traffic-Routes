@@ -11,4 +11,18 @@ export default class MapMarker implements CustomMap.Marker {
     static create(coordinate: L.LatLngExpression): MapMarker {
         return new MapMarker(coordinate);
     }
+
+    public bindTooltip(content: string) {
+        const { marker } = this;
+
+        marker.bindTooltip(content);
+
+        marker.on('mouseover', () => {
+            marker.openTooltip();
+        });
+
+        marker.on('mouseleave', () => {
+            marker.openTooltip();
+        });
+    }
 }
