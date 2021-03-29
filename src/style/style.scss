@@ -1,10 +1,2 @@
+@import 'components/global.scss';
 @import 'components/map.scss';
-@import 'components/route-search.scss';
-
-body {
-    background-color: black;
-    color: silver;
-    margin: 0;
-    padding: 0;
-    width: 100%;    height: 100%;
-}
