@@ -9,18 +9,25 @@ declare namespace CustomMap {
         initialize(): void;
     };
 
+    interface Layer {
+        readonly map: L.Map;
+        readonly layer: L.LayerGroup;
+
+        clear(): void;
+    };
+
     interface Marker {
         marker: L.Marker;
         // bindTooltip(content: string): void;
     };
 
-    interface MarkerLayer {
-        readonly map: L.Map;
-        readonly layer: L.LayerGroup;
-
+    interface MarkerLayer extends Layer {
         addMarker(marker: Marker): void;
         addMarkers(markers: Marker[]): void;
-        clear(): void;
+    };
+
+    interface PolylineLayer extends Layer {
+        addPolyline(coordinates: L.LatLngExpression[], options?: L.PolylineOptions): void;
     };
 
     interface MapUtitity {

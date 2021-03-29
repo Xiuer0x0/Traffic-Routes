@@ -4,12 +4,14 @@ import mapConfig, { MapConfig } from './map.config';
 import MapInitializer from './MapInitializer';
 import MapMarker from './MapMarker';
 import MapMarkerLayer from './MapMarkerLayer';
+import MapPolylineLayer from './MapPolylineLayer';
 import MapUtility from './MapUtility';
 
 export default class MapFacade {
     private map: L.Map | null = L.map(mapConfig.containerID);
     private mapInitializer: CustomMap.Initializer;
     private mapMarkerLayer: CustomMap.MarkerLayer;
+    private mapPolylineLayer: CustomMap.PolylineLayer;
     private mapUtility: CustomMap.MapUtitity;
 
     constructor(readonly config: MapConfig) {
@@ -19,6 +21,7 @@ export default class MapFacade {
 
         this.mapInitializer = new MapInitializer(this.map, config);
         this.mapMarkerLayer = new MapMarkerLayer(this.map);
+        this.mapPolylineLayer = new MapPolylineLayer(this.map);
         this.mapUtility = new MapUtility(this.map);
 
         this.mapInitializer.initialize();
@@ -40,5 +43,17 @@ export default class MapFacade {
         coordinates.forEach(latLng => {
             this.drawPin(latLng, tooltipTemplete);
         });
+    }
+
+    clearPins() {
+        this.mapMarkerLayer.clear();
+    }
+
+    drawPolyline(coordinates: L.LatLngExpression[], options?: L.PolylineOptions) {
+        this.mapPolylineLayer.addPolyline(coordinates, options);
+    }
+
+    clearPolyline() {
+        this.mapPolylineLayer.clear();
     }
 }
