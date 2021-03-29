@@ -41,4 +41,8 @@ export default class MapFacade {
             this.drawPin(latLng, tooltipTemplete);
         });
     }
+
+    clearPins() {
+        this.mapMarkerLayer.clear();
+    }
 }

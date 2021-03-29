@@ -8,10 +8,16 @@ export default class BusMapFacade {
     ) {}
 
     pinStops(data: Bus.Stop[]) {
+        this.clearPins();
+
         data.map(obj => {
             const tooltipTemplete = `<div>${obj.name.zhTW}</div>`;
 
             this.mapFacade.drawPin(obj.latLng, tooltipTemplete);    
         });
+    }
+
+    clearPins() {
+        this.mapFacade.clearPins();
     }
 }
