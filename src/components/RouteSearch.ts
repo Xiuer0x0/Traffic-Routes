@@ -1,4 +1,7 @@
+import _ from 'lodash';
 import { Bus } from './dataProcess/Bus';
+
+type RouteItemOnclick = (event: HTMLElementEventMap['click']) => void;
 
 export default class RouteSearch {
     private $wrap: HTMLDivElement;
@@ -48,7 +51,7 @@ export default class RouteSearch {
         $input.addEventListener('keyup', (e) => {
             const value = $input.value;
 
-            upgradeRouteList(this.$filterList, this.source, value);
+            this.upgradeRouteList(this.$filterList, this.source, value);
         });
 
         return $input;
@@ -62,42 +65,64 @@ export default class RouteSearch {
 
         return $ul;
     }
-}
 
-function upgradeRouteList($filterList: HTMLUListElement, source: Bus.Route[], keyword: string = '') {
-    if (keyword === '') {
-        $filterList.innerHTML = '';
-        return false;
+    private upgradeRouteList($filterList: HTMLUListElement, source: Bus.Route[], keyword: string = '') {
+        if (keyword === '') {
+            $filterList.innerHTML = '';
+            return false;
+        }
+    
+        const filterData = this.filterRouteData(source, keyword);
+    
+        $filterList.innerText = '';
+        this.appendToList($filterList, filterData);
     }
 
-    const filterData = filterRouteData(source, keyword);
+    private filterRouteData(source: Bus.Route[], keyword: string): Bus.Route[] {
+        const filterData = source.filter((value) => {
+            const pathName = value.pathName.zhTW;
+    
+            if (pathName) {
+                return pathName.indexOf(keyword) >= 0;
+            }
+        });
+    
+        return filterData;
+    }
 
-    $filterList.innerText = '';
-    appendToList($filterList, filterData);
-}
+    private appendToList($ul: HTMLUListElement, routes: Bus.Route[]) {
+        routes.forEach((obj) => {
+            const $li = this.createRouteItem(obj);
+    
+            if ($li) {
+                $ul.appendChild($li);
+            }
+        });
+    }
 
-function filterRouteData(source: Bus.Route[], keyword: string): Bus.Route[] {
-    const filterData = source.filter((value) => {
-        const pathName = value.pathName.zhTW;
-
-        if (pathName) {
-            return pathName.indexOf(keyword) >= 0;
+    private createRouteItem(data: Bus.Route): HTMLLIElement | null {
+        const { UID, pathName } = data;
+    
+        if (pathName.zhTW === undefined) {
+            return null;
         }
-    });
+    
+        const $li = document.createElement('li');
+    
+        $li.innerText = pathName.zhTW;
+        $li.className = 'route-item';
+        $li.dataset.UID = UID;
+    
+        return $li;
+    }
 
-    return filterData;
-}
+    bindRouteItemOnclick(callback: RouteItemOnclick = () => {}) {
+        this.$filterList.addEventListener('click', (e) => {
+            const target = e.target as HTMLDivElement;
 
-function appendToList($ul: HTMLUListElement, data: Bus.Route[]) {
-    data.forEach((obj) => {
-        const pathName = obj.pathName.zhTW;
-
-        if (pathName) {
-            const $li = document.createElement('li');
-
-            $li.innerText = pathName;
-
-            $ul.appendChild($li);
-        }
-    });
+            if (target.className === 'route-item') {
+                callback(e);
+            }
+        });
+    }
 }

@@ -1,3 +1,5 @@
+import _ from "lodash";
+import L from 'leaflet';
 import { Bus } from "./dataProcess/Bus";
 import mapConfig from './map/map.config';
 import MapFacade from "./map/MapFacade";
@@ -17,7 +19,24 @@ export default class BusMapFacade {
         });
     }
 
+    drawPath(data: Bus.Stop[]) {
+        const coordinates = _.reduce(data, (result, values) => {
+            result = [...result, values.latLng];
+
+            return result;
+        }, [] as L.LatLngExpression[]);
+
+        this.clearPath();
+        this.pinStops(data);
+        this.mapFacade.drawPolyline(coordinates);
+    }
+
     clearPins() {
         this.mapFacade.clearPins();
+    }
+
+    clearPath() {
+        this.clearPins();
+        this.mapFacade.clearPolyline();
     }
 }
