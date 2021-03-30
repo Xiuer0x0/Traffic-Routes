@@ -1,16 +1,17 @@
 import _ from 'lodash';
+import BusMapFacade from './BusMap';
 import { Bus } from './dataProcess/Bus';
-
-type RouteItemOnclick = (event: HTMLElementEventMap['click']) => void;
+import BusData from './dataProcess/busData';
 
 export default class RouteSearch {
-    private $wrap: HTMLDivElement;
-    private $searchInput: HTMLInputElement;
-    private $filterList: HTMLUListElement;
-    
+    public $wrap: HTMLDivElement;
+    public $searchInput: HTMLInputElement;
+    public $filterList: HTMLUListElement;
+
     private constructor(
         private readonly $container: HTMLElement,
-        private readonly source: Bus.Route[],
+        private readonly $map: BusMapFacade,
+        private readonly busData: Bus.Data,
     ) {
         this.$wrap = this.createWrapper();
         this.$searchInput = this.createSearchInput();
@@ -18,8 +19,10 @@ export default class RouteSearch {
         this.drawUI();
     }
 
-    static create($container: HTMLElement, source: Bus.Route[]) {
-        return new RouteSearch($container, [...source]);
+    public static async create($container: HTMLElement, $map: BusMapFacade) {
+        const busData = await BusData.initialize();
+
+        return new RouteSearch($container, $map, busData);
     }
 
     private drawUI() {
@@ -30,7 +33,7 @@ export default class RouteSearch {
 
         this.$wrap.appendChild(this.$searchInput);
         this.$wrap.appendChild(this.$filterList);
-    
+
         this.$container.appendChild(this.$wrap);
     }
 
@@ -51,7 +54,7 @@ export default class RouteSearch {
         $input.addEventListener('keyup', (e) => {
             const value = $input.value;
 
-            this.upgradeRouteList(this.$filterList, this.source, value);
+            this.upgradeRouteList(value);
         });
 
         return $input;
@@ -66,63 +69,69 @@ export default class RouteSearch {
         return $ul;
     }
 
-    private upgradeRouteList($filterList: HTMLUListElement, source: Bus.Route[], keyword: string = '') {
+    private upgradeRouteList(keyword: string = '') {
+        this.$filterList.innerText = '';
+
         if (keyword === '') {
-            $filterList.innerHTML = '';
             return false;
         }
-    
-        const filterData = this.filterRouteData(source, keyword);
-    
-        $filterList.innerText = '';
-        this.appendToList($filterList, filterData);
+
+        const filterData = this.filterRouteData(keyword);
+
+        this.appendToFilterList(filterData);
     }
 
-    private filterRouteData(source: Bus.Route[], keyword: string): Bus.Route[] {
-        const filterData = source.filter((value) => {
+    private filterRouteData(keyword: string): Bus.Route[] {
+        const { routes } = this.busData;
+        const filterData = routes.filter((value) => {
             const pathName = value.pathName.zhTW;
-    
+
             if (pathName) {
                 return pathName.indexOf(keyword) >= 0;
             }
         });
-    
+
         return filterData;
     }
 
-    private appendToList($ul: HTMLUListElement, routes: Bus.Route[]) {
+    private appendToFilterList(routes: Bus.Route[]) {
         routes.forEach((obj) => {
             const $li = this.createRouteItem(obj);
-    
+
             if ($li) {
-                $ul.appendChild($li);
+                this.$filterList.appendChild($li);
             }
         });
     }
 
     private createRouteItem(data: Bus.Route): HTMLLIElement | null {
         const { UID, pathName } = data;
-    
+
         if (pathName.zhTW === undefined) {
             return null;
         }
-    
+
         const $li = document.createElement('li');
-    
+
         $li.innerText = pathName.zhTW;
         $li.className = 'route-item';
-        $li.dataset.UID = UID;
-    
-        return $li;
-    }
+        $li.addEventListener('click', () => {
+            const path = this.busData.getPath(UID);
+            const pathArray = path?.outbound?.toArray();
+            let stops: Bus.Stop[] = [];
 
-    bindRouteItemOnclick(callback: RouteItemOnclick = () => {}) {
-        this.$filterList.addEventListener('click', (e) => {
-            const target = e.target as HTMLDivElement;
+            pathArray?.forEach((values) => {
+                const { stopUID } = values;
+                const stopInfo = this.busData.getStop(stopUID);
 
-            if (target.className === 'route-item') {
-                callback(e);
-            }
+                if (stopInfo) {
+                    stops = [...stops, stopInfo];
+                }
+            });
+
+            this.$map.drawPath(stops);
         });
+
+        return $li;
     }
 }
