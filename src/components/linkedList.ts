@@ -19,6 +19,7 @@ export interface LinkedList<T> {
     remove(index: number): void;
     shift(): void;
     pop(): void;
+    toArray(): T[];
 };
 
 export class GenericLinkedListNode<T> implements LinkedListNode<T> {
@@ -143,5 +144,17 @@ export class GenericLinkedList<T> implements LinkedList<T> {
 
     public pop() {
         this.remove(this.length - 1);
+    }
+
+    public toArray() {
+        let array: T[] = [];
+        let currentNode: LinkedListNode<T> | null = this.head;
+
+        while (currentNode) {
+            array = [...array, currentNode.value];
+            currentNode = currentNode.next;
+        }
+
+        return array;
     }
 }
