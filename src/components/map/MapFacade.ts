@@ -14,7 +14,7 @@ export default class MapFacade {
     private mapPolylineLayer: CustomMap.PolylineLayer;
     private mapUtility: CustomMap.MapUtitity;
 
-    constructor(readonly config: MapConfig) {
+    public constructor(readonly config: MapConfig = mapConfig) {
         if (this.map === null) {
             throw new Error(`Map isn't correctly initialized.`);
         }
@@ -27,11 +27,11 @@ export default class MapFacade {
         this.mapInitializer.initialize();
     }
 
-    focusCoordinates(lanLng: L.LatLngExpression, options?: CustomMap.ZoomPanOptions) {
+    public focusCoordinates(lanLng: L.LatLngExpression, options?: CustomMap.ZoomPanOptions) {
         this.mapUtility.flyTo(lanLng, options);
     }
 
-    drawPin(coordinate: L.LatLngExpression, tooltipTemplete: string = '') {
+    public drawPin(coordinate: L.LatLngExpression, tooltipTemplete: string = '') {
         const marker = MapMarker.create(coordinate);
 
         marker.bindTooltip(tooltipTemplete);
@@ -39,21 +39,21 @@ export default class MapFacade {
         this.mapMarkerLayer.addMarker(marker);
     }
 
-    drawPins(coordinates: L.LatLngExpression[], tooltipTemplete: string = '') {
+    public drawPins(coordinates: L.LatLngExpression[], tooltipTemplete: string = '') {
         coordinates.forEach(latLng => {
             this.drawPin(latLng, tooltipTemplete);
         });
     }
 
-    clearPins() {
+    public clearPins() {
         this.mapMarkerLayer.clear();
     }
 
-    drawPolyline(coordinates: L.LatLngExpression[], options?: L.PolylineOptions) {
+    public drawPolyline(coordinates: L.LatLngExpression[], options?: L.PolylineOptions) {
         this.mapPolylineLayer.addPolyline(coordinates, options);
     }
 
-    clearPolyline() {
+    public clearPolyline() {
         this.mapPolylineLayer.clear();
     }
 }

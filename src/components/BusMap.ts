@@ -1,17 +1,27 @@
 import _ from "lodash";
 import L from 'leaflet';
 import { Bus } from "./dataProcess/Bus";
-import mapConfig from './map/map.config';
+import mapConfig, { MapConfig } from './map/map.config';
 import MapFacade from "./map/MapFacade";
 
+interface BusMapFacadeOptions {
+    readonly config?: MapConfig;
+    readonly mapFacade?: MapFacade;
+};
+
 export default class BusMapFacade {
-    constructor(
-        private readonly mapFacade: MapFacade = new MapFacade(mapConfig),
-    ) {}
+    public readonly config: MapConfig;
+    public readonly mapFacade: MapFacade;
 
-    pinStops(data: Bus.Stop[]) {
-        this.clearPins();
+    public constructor({
+        config = mapConfig,
+        mapFacade = new MapFacade(config),
+    }: BusMapFacadeOptions = {}) {
+        this.config = config;
+        this.mapFacade = mapFacade;
+    }
 
+    public drawStops(data: Bus.Stop[]) {
         data.map(obj => {
             const tooltipTemplete = `<div>${obj.name.zhTW}</div>`;
 
@@ -19,7 +29,11 @@ export default class BusMapFacade {
         });
     }
 
-    drawPath(data: Bus.Stop[]) {
+    public clearStops() {
+        this.mapFacade.clearPins();
+    }
+
+    public drawPath(data: Bus.Stop[]) {
         const coordinates = _.reduce(data, (result, values) => {
             result = [...result, values.latLng];
 
@@ -27,16 +41,12 @@ export default class BusMapFacade {
         }, [] as L.LatLngExpression[]);
 
         this.clearPath();
-        this.pinStops(data);
+        this.drawStops(data);
         this.mapFacade.drawPolyline(coordinates);
     }
 
-    clearPins() {
+    public clearPath() {
         this.mapFacade.clearPins();
-    }
-
-    clearPath() {
-        this.clearPins();
         this.mapFacade.clearPolyline();
     }
 }
