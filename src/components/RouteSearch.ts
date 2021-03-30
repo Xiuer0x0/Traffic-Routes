@@ -17,6 +17,8 @@ export default class RouteSearch {
         this.$searchInput = this.createSearchInput();
         this.$filterList = this.createFilterList();
         this.drawUI();
+
+        this.upgradeRouteList();
     }
 
     public static async create($container: HTMLElement, $map: BusMapFacade) {
@@ -72,11 +74,9 @@ export default class RouteSearch {
     private upgradeRouteList(keyword: string = '') {
         this.$filterList.innerText = '';
 
-        if (keyword === '') {
-            return false;
-        }
-
-        const filterData = this.filterRouteData(keyword);
+        const filterData = (keyword === '')
+            ? this.busData.routes
+            : this.filterRouteData(keyword);
 
         this.appendToFilterList(filterData);
     }
