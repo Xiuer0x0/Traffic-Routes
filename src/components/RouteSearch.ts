@@ -2,11 +2,16 @@ import _ from 'lodash';
 import BusMapFacade from './BusMap';
 import { Bus } from './dataProcess/Bus';
 import BusData from './dataProcess/busData';
+import { LinkedList } from './linkedList';
+
+type Direction = keyof Bus.PathDirection;
 
 export default class RouteSearch {
     public $wrap: HTMLDivElement;
     public $searchInput: HTMLInputElement;
     public $filterList: HTMLUListElement;
+
+    private directionWrapperClassName = 'direction-wrapper';
 
     private constructor(
         private readonly $container: HTMLElement,
@@ -27,12 +32,15 @@ export default class RouteSearch {
         return new RouteSearch($container, $map, busData);
     }
 
+    /**
+     * ```html
+     *  <div class="input-wrapper">
+     *      <input type="text" id="SearchInput">
+     *      <ul id="FilterList" class="filter-list"></ul>
+     *  </div>
+     * ```
+     */
     private drawUI() {
-        // <div class="input-wrapper">
-        //     <input type="text" id="SearchInput">
-        //     <ul id="FilterList" class="filter-list"></ul>
-        // </div>
-
         this.$wrap.appendChild(this.$searchInput);
         this.$wrap.appendChild(this.$filterList);
 
@@ -94,9 +102,17 @@ export default class RouteSearch {
         return filterData;
     }
 
+    /**
+     * ```html
+     *  <ul id="FilterList" class="filter-list">
+     *      <li class="reoute-item"></li>
+     *      ...
+     *  </ul>
+     * ```
+     */
     private appendToFilterList(routes: Bus.Route[]) {
         routes.forEach((obj) => {
-            const $li = this.createRouteItem(obj);
+            const $li = this.getRouteItem(obj);
 
             if ($li) {
                 this.$filterList.appendChild($li);
@@ -104,34 +120,119 @@ export default class RouteSearch {
         });
     }
 
-    private createRouteItem(data: Bus.Route): HTMLLIElement | null {
+    /**
+     * 點擊 `route-item` 才產生 `direction-wrapper`
+     * ```html 
+     *  <li class="route-item">
+     *      <label class="route-name">路線名稱</label>
+     *      <div class="direction-wrapper"></div>
+     *  </li>
+     * ```
+     */
+    private getRouteItem(data: Bus.Route): HTMLLIElement | null {
         const { UID, pathName } = data;
 
         if (pathName.zhTW === undefined) {
             return null;
         }
 
+        const $routeName = document.createElement('label');
+
+        $routeName.innerText = pathName.zhTW;
+        $routeName.className = 'route-name';
+
         const $li = document.createElement('li');
 
-        $li.innerText = pathName.zhTW;
+        $li.appendChild($routeName);
         $li.className = 'route-item';
-        $li.addEventListener('click', () => {
+        $li.addEventListener('click', (e) => {
             const path = this.busData.getPath(UID);
-            const pathArray = path?.outbound?.toArray();
-            let stops: Bus.Stop[] = [];
 
-            pathArray?.forEach((values) => {
-                const { stopUID } = values;
-                const stopInfo = this.busData.getStop(stopUID);
+            if (path && $li.querySelector(`.${this.directionWrapperClassName}`) === null) {
+                this.clearAllPathDirection();
 
-                if (stopInfo) {
-                    stops = [...stops, stopInfo];
-                }
-            });
+                const $pathDirection = this.getPathDirection(path);
 
-            this.$map.drawPath(stops);
+                $li.appendChild($pathDirection);
+            }
         });
 
         return $li;
+    }
+
+    private clearAllPathDirection() {
+        const $directionWrapper = this.$filterList.querySelectorAll(`.${this.directionWrapperClassName}`);
+
+        $directionWrapper.forEach(($el) => {
+            $el.remove();
+        });
+    }
+
+    /**
+     * ```html
+     *  <div class="direction-wrapper">
+     *      <span class="direction">{行徑方向}</span>
+     *      ...
+     *  </div>
+     * ```
+     */
+    private getPathDirection(path: Bus.PathDirection): HTMLDivElement {
+        enum direction {
+            outbound = '去程',
+            returnTrip = '回程',
+            cycle = '循環',
+        };
+
+        const $directionWrapper = document.createElement('div');
+
+        $directionWrapper.className = this.directionWrapperClassName;
+
+        _.mapKeys(path, (value, key) => {
+            const keyword = key as Direction;
+            const currentDirection = direction[keyword];
+            const pathSequence = path[keyword];
+
+            if (value && currentDirection && pathSequence) {
+                const $direction = this.getPathDirectionTag(currentDirection, pathSequence);
+
+                $directionWrapper.appendChild($direction);
+            }
+        });
+
+        return $directionWrapper;
+    }
+
+    /**
+     * ```html
+     *  <span class="direction">{行徑方向}</span>
+     * ```
+     */
+    private getPathDirectionTag(text: string, pathSequence: LinkedList<Bus.PathSequence>): HTMLSpanElement {
+        const $span = document.createElement('span');
+
+        $span.className = 'direction';
+        $span.innerText = text;
+        $span.addEventListener('click', (e) => {
+            this.drawPathToMap(pathSequence);
+            e.stopPropagation();
+        });
+
+        return $span;
+    }
+
+    private drawPathToMap(path: LinkedList<Bus.PathSequence>) {
+        const pathArray = path.toArray();
+        let stops: Bus.Stop[] = [];
+
+        pathArray.forEach((values) => {
+            const { stopUID } = values;
+            const stopInfo = this.busData.getStop(stopUID);
+
+            if (stopInfo) {
+                stops = [...stops, stopInfo];
+            }
+        });
+
+        this.$map.drawPath(stops);
     }
 }

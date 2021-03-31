@@ -19,7 +19,15 @@
         max-height: 85vh;
     }
 
-    .route-item {
+    .route-name {
+        cursor: pointer;
+    }
+
+    .direction {
+        margin-right: .25rem;
+        padding: .25rem;
+        background-color: rgba(0, 0, 0, .7);
+
         cursor: pointer;
     }
 }
