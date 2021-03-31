@@ -65,7 +65,7 @@ declare namespace Bus {
             StopBoarding: number;
             /** 地區既用中之站牌代碼 */
             StopID: number;
-            /** 站牌中文名稱 */
+            /** 站牌英文名稱 */
             StopNameEn: string;
             /** 站牌中文名稱 */
             StopNameZh: string;
@@ -188,16 +188,23 @@ declare namespace Bus {
 
     interface PathFilter extends PathSequence {
         direction: number;
+        stopName: i18n;
     };
 
     interface FilterPathSource {
         [routeID: string]: PathFilter[];
     };
 
+    interface PathSequenceInfo {
+        departure: i18n;
+        destination: i18n;
+        stopSequence: LinkedList<PathSequence>;
+    };
+
     interface PathDirection {
-        outbound: LinkedList<PathSequence> | null;
-        returnTrip: LinkedList<PathSequence> | null;
-        cycle: LinkedList<PathSequence> | null;
+        outbound: PathSequenceInfo | null;
+        returnTrip: PathSequenceInfo | null;
+        cycle: PathSequenceInfo | null;
     };
 
     interface Path extends DataIndex, PathDirection {
