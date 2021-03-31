@@ -190,10 +190,10 @@ export default class RouteSearch {
         _.mapKeys(path, (value, key) => {
             const keyword = key as Direction;
             const currentDirection = direction[keyword];
-            const pathSequence = path[keyword];
+            const pathSequenceInfo = path[keyword];
 
-            if (value && currentDirection && pathSequence) {
-                const $direction = this.getPathDirectionTag(currentDirection, pathSequence);
+            if (value && currentDirection && pathSequenceInfo) {
+                const $direction = this.getPathDirectionTag(currentDirection, pathSequenceInfo);
 
                 $directionWrapper.appendChild($direction);
             }
@@ -207,17 +207,26 @@ export default class RouteSearch {
      *  <span class="direction">{行徑方向}</span>
      * ```
      */
-    private getPathDirectionTag(text: string, pathSequence: LinkedList<Bus.PathSequence>): HTMLSpanElement {
+    private getPathDirectionTag(text: string, pathSequenceInfo: Bus.PathSequenceInfo): HTMLSpanElement {
+        const directionName = this.getPathDirectionName(pathSequenceInfo);
         const $span = document.createElement('span');
 
         $span.className = 'direction';
-        $span.innerText = text;
+        $span.innerText = (directionName ? `${text}： ${directionName}` : text);
         $span.addEventListener('click', (e) => {
-            this.drawPathToMap(pathSequence);
+            this.drawPathToMap(pathSequenceInfo.stopSequence);
             e.stopPropagation();
         });
 
         return $span;
+    }
+
+    private getPathDirectionName(pathSequenceInfo: Bus.PathSequenceInfo): string | null {
+        const { departure, destination } = pathSequenceInfo;
+
+        return (departure.zhTW && destination.zhTW)
+            ? `${departure.zhTW} → ${destination.zhTW}`
+            : null;
     }
 
     private drawPathToMap(path: LinkedList<Bus.PathSequence>) {
