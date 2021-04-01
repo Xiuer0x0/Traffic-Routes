@@ -4,11 +4,19 @@ import { Bus } from './dataProcess/Bus';
 import BusData from './dataProcess/busData';
 import { LinkedList } from './linkedList';
 
+//#region Font Awesome
+import fontawesome from '@fortawesome/fontawesome';
+import { faSearch } from '@fortawesome/fontawesome-free-solid';
+import { faTimesCircle } from '@fortawesome/fontawesome-free-regular';
+
+fontawesome.library.add(faSearch, faTimesCircle);
+//#endregion
+
 type Direction = keyof Bus.PathDirection;
 
 export default class RouteSearch {
     public $wrap: HTMLDivElement;
-    public $searchInput: HTMLInputElement;
+    public $searchInput: HTMLDivElement;
     public $filterList: HTMLUListElement;
 
     private directionWrapperClassName = 'direction-wrapper';
@@ -56,18 +64,63 @@ export default class RouteSearch {
     }
 
     private createSearchInput(): HTMLInputElement {
+    /**
+     * ```html
+     *  <div class="search-input-wrapper">
+     *      <span class="icon-search">
+     *          <i class="fas fa-search"></i>
+     *      </span>
+     *      <input id="SearchInput" class="search-input" type="text">
+     *      <span class="btn-clear">
+     *          <i class="far fa-times-circle"></i>
+     *      </span>
+     *  </div>
+     * ```
+     */
+        const $inputWrapper = document.createElement('div');
         const $input = document.createElement('input');
+        const $searchIcon = document.createElement('span');
+        const $clearBtn = document.createElement('span');
 
+        //#region $input
         $input.id = 'SearchInput';
         $input.className = 'search-input';
         $input.type = 'text';
+        $input.placeholder = '搜尋公車路線';
         $input.addEventListener('keyup', (e) => {
             const value = $input.value;
 
             this.upgradeRouteList(value);
-        });
 
-        return $input;
+            (value)
+                ? $clearBtn.classList.remove('hide')
+                : $clearBtn.classList.add('hide');
+        });
+        //#endregion
+
+        //#region $clear
+        $clearBtn.className = 'btn-clear hide';
+        $clearBtn.innerHTML = '<i class="far fa-times-circle"></i>';
+        $clearBtn.addEventListener('click', (e) => {
+            $input.value = '';
+            this.upgradeRouteList();
+            $clearBtn.classList.add('hide');
+        });
+        //#endregion
+
+        //#region $searchIcon
+        $searchIcon.className = 'icon-search';
+        $searchIcon.innerHTML = '<i class="fas fa-search"></i>';
+        //#endregion
+
+        //#region $inputWrapper
+        $inputWrapper.className = 'search-input-wrapper';
+        $inputWrapper.appendChild($searchIcon);
+        $inputWrapper.appendChild($input);
+        $inputWrapper.appendChild($clearBtn);
+        //#endregion
+
+        return $inputWrapper;
     }
 
     private createFilterList(): HTMLUListElement {

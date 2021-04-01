@@ -10,7 +10,34 @@
     border: 2pt;
 
     .search-input {
+        $padding-side: 1.5rem;
+
+        &-wrapper {
+            display: flex;
+            position: relative;
+
+            .span {
+                position: absolute;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;   width: $padding-side;
+            }
+
+            .icon-search {
+                @extend .span;
+                left: 0;
+            }
+
+            .btn-clear {
+                @extend .span;
+                right: 0;
+            }
+        }
+
+        padding: .125rem $padding-side 0;
         width: 98%;
+        font-size: 1rem;
     }
 
     .filter-list {
