@@ -164,13 +164,17 @@ export default class RouteSearch {
      * ```
      */
     private appendToFilterList(routes: Bus.Route[]) {
+        const $fragment = document.createDocumentFragment();
+
         routes.forEach((obj) => {
             const $li = this.getRouteItem(obj);
 
             if ($li) {
-                this.$filterList.appendChild($li);
+                $fragment.appendChild($li);
             }
         });
+
+        this.$filterList.appendChild($fragment);
     }
 
     /**
