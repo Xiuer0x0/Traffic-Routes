@@ -12,6 +12,8 @@ busData.then((source) => {
     const $mapWrapper = <HTMLDivElement | null>(document.querySelector('.map-wrapper'));
 
     if ($mapWrapper) {
-        RouteSearch.create($mapWrapper, $map);
+        RouteSearch.create($map).then($routeSearch => {
+            $routeSearch.drawTo($mapWrapper);
+        });
     }
 });

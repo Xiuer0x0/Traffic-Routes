@@ -19,25 +19,22 @@ export default class RouteSearch {
     public $searchInput: HTMLDivElement;
     public $filterList: HTMLUListElement;
 
+    private $container: HTMLElement | null = null;
     private directionWrapperClassName = 'direction-wrapper';
 
     private constructor(
-        private readonly $container: HTMLElement,
         private readonly $map: BusMapFacade,
         private readonly busData: Bus.Data,
     ) {
-        this.$wrap = this.getWrapper();
-        this.$searchInput = this.getSearchInput();
-        this.$filterList = this.getFilterList();
-        this.drawUI();
-
-        this.upgradeRouteList();
+        this.$wrap = this.createWrapper();
+        this.$searchInput = this.createSearchInput();
+        this.$filterList = this.createFilterList();
     }
 
-    public static async create($container: HTMLElement, $map: BusMapFacade) {
-        const busData = await BusData.initialize();
+    public static async create($map: BusMapFacade, busData?: Bus.Data) {
+        const source = busData || await BusData.initialize();
 
-        return new RouteSearch($container, $map, busData);
+        return new RouteSearch($map, source);
     }
 
     /**
@@ -48,14 +45,18 @@ export default class RouteSearch {
      *  </div>
      * ```
      */
-    private drawUI() {
+    public drawTo($container: HTMLElement) {
+        this.$container = $container;
+
+        this.$wrap.innerText = '';
         this.$wrap.appendChild(this.$searchInput);
         this.$wrap.appendChild(this.$filterList);
+        this.upgradeRouteList();
 
         this.$container.appendChild(this.$wrap);
     }
 
-    private getWrapper(): HTMLDivElement {
+    private createWrapper(): HTMLDivElement {
         const $div = document.createElement('div');
 
         $div.className = 'route-search';
@@ -76,7 +77,7 @@ export default class RouteSearch {
      *  </div>
      * ```
      */
-    private getSearchInput(): HTMLDivElement {
+    private createSearchInput(): HTMLDivElement {
         const $inputWrapper = document.createElement('div');
         const $input = document.createElement('input');
         const $searchIcon = document.createElement('span');
@@ -123,7 +124,7 @@ export default class RouteSearch {
         return $inputWrapper;
     }
 
-    private getFilterList(): HTMLUListElement {
+    private createFilterList(): HTMLUListElement {
         const $ul = document.createElement('ul');
 
         $ul.id = 'FilterList';
@@ -167,7 +168,7 @@ export default class RouteSearch {
         const $fragment = document.createDocumentFragment();
 
         routes.forEach((obj) => {
-            const $li = this.getRouteItem(obj);
+            const $li = this.createRouteItem(obj);
 
             if ($li) {
                 $fragment.appendChild($li);
@@ -186,7 +187,7 @@ export default class RouteSearch {
      *  </li>
      * ```
      */
-    private getRouteItem(data: Bus.Route): HTMLLIElement | null {
+    private createRouteItem(data: Bus.Route): HTMLLIElement | null {
         const { UID, pathName } = data;
 
         if (pathName.zhTW === undefined) {
@@ -208,7 +209,7 @@ export default class RouteSearch {
             if (path && $li.querySelector(`.${this.directionWrapperClassName}`) === null) {
                 this.clearAllPathDirection();
 
-                const $pathDirection = this.getPathDirection(path);
+                const $pathDirection = this.createPathDirection(path);
 
                 $li.appendChild($pathDirection);
             }
@@ -233,7 +234,7 @@ export default class RouteSearch {
      *  </div>
      * ```
      */
-    private getPathDirection(path: Bus.PathDirection): HTMLDivElement {
+    private createPathDirection(path: Bus.PathDirection): HTMLDivElement {
         enum direction {
             outbound = '去程',
             returnTrip = '回程',
@@ -250,7 +251,7 @@ export default class RouteSearch {
             const pathSequenceInfo = path[keyword];
 
             if (value && currentDirection && pathSequenceInfo) {
-                const $direction = this.getPathDirectionTag(currentDirection, pathSequenceInfo);
+                const $direction = this.createPathDirectionTag(currentDirection, pathSequenceInfo);
 
                 $directionWrapper.appendChild($direction);
             }
@@ -264,7 +265,7 @@ export default class RouteSearch {
      *  <span class="direction">{行徑方向}</span>
      * ```
      */
-    private getPathDirectionTag(text: string, pathSequenceInfo: Bus.PathSequenceInfo): HTMLSpanElement {
+    private createPathDirectionTag(text: string, pathSequenceInfo: Bus.PathSequenceInfo): HTMLSpanElement {
         const directionName = this.getPathDirectionName(pathSequenceInfo);
         const $span = document.createElement('span');
 
