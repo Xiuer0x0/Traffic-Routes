@@ -26,9 +26,9 @@ export default class RouteSearch {
         private readonly $map: BusMapFacade,
         private readonly busData: Bus.Data,
     ) {
-        this.$wrap = this.createWrapper();
-        this.$searchInput = this.createSearchInput();
-        this.$filterList = this.createFilterList();
+        this.$wrap = this.getWrapper();
+        this.$searchInput = this.getSearchInput();
+        this.$filterList = this.getFilterList();
         this.drawUI();
 
         this.upgradeRouteList();
@@ -55,7 +55,7 @@ export default class RouteSearch {
         this.$container.appendChild(this.$wrap);
     }
 
-    private createWrapper(): HTMLDivElement {
+    private getWrapper(): HTMLDivElement {
         const $div = document.createElement('div');
 
         $div.className = 'route-search';
@@ -63,7 +63,6 @@ export default class RouteSearch {
         return $div;
     }
 
-    private createSearchInput(): HTMLInputElement {
     /**
      * ```html
      *  <div class="search-input-wrapper">
@@ -77,6 +76,7 @@ export default class RouteSearch {
      *  </div>
      * ```
      */
+    private getSearchInput(): HTMLDivElement {
         const $inputWrapper = document.createElement('div');
         const $input = document.createElement('input');
         const $searchIcon = document.createElement('span');
@@ -123,7 +123,7 @@ export default class RouteSearch {
         return $inputWrapper;
     }
 
-    private createFilterList(): HTMLUListElement {
+    private getFilterList(): HTMLUListElement {
         const $ul = document.createElement('ul');
 
         $ul.id = 'FilterList';
