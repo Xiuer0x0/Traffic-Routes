@@ -16,7 +16,7 @@
             display: flex;
             position: relative;
 
-            .span {
+            %span {
                 position: absolute;
                 display: flex;
                 align-items: center;
@@ -25,12 +25,12 @@
             }
 
             .icon-search {
-                @extend .span;
+                @extend %span;
                 left: 0;
             }
 
             .btn-clear {
-                @extend .span;
+                @extend %span;
                 right: 0;
             }
         }
@@ -41,7 +41,7 @@
     }
 
     .filter-list {
-        overflow: hidden;
+        overflow-x: hidden;
         overflow-y: auto;
         max-height: 85vh;
     }
