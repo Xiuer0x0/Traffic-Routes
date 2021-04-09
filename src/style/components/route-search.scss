@@ -43,7 +43,8 @@
     .filter-list {
         overflow-x: hidden;
         overflow-y: auto;
-        max-height: 85vh;
+        max-width: 15rem;   max-height: 85vh;
+        padding-left: 2rem;
     }
 
     .route-name {
