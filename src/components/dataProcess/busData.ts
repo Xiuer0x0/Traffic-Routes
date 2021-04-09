@@ -13,11 +13,11 @@ export default class BusData implements Bus.Data {
 
     private static async request() {
         const response = await requestBusData();
-        const [ stopsSource, routesSource, pathsSource ] = response;
+        const { stops, routes, paths } = response;
         const source: Bus.DataSource = {
-            stops: [...stopsSource],
-            routes: [...routesSource],
-            paths: [...pathsSource],
+            stops: [...stops],
+            routes: [...routes],
+            paths: [...paths],
         };
 
         return source;
@@ -69,9 +69,30 @@ function requestBusData() {
     const routeURL = '../../assets/data/GetRoute.json';
     const pathURL = '../../assets/data/roadMap_sample.csv';
 
-    return Promise.all([
+    const request = Promise.all([
         fetchBusStop(stopURL, cityCodes.taipei),
         fetchBusRoutes(routeURL, cityCodes.taipei),
         fetchBusPaths(pathURL),
-    ]);
+    ]).then((data) => {
+        const [ stops, routes, paths ] = data;
+        const newRoutes = comparisonRoutesAndPathsData({stops, routes, paths});
+
+        return {
+            stops,
+            routes: newRoutes,
+            paths,
+        };
+    });
+
+    return request;
+}
+
+function comparisonRoutesAndPathsData(data: Bus.DataSource): Bus.Route[] {
+    const { routes, paths } = data;
+    const filterKey = _.map(paths, 'UID');
+    const newRoutes = _.filter(routes, (info) => {
+        return filterKey.indexOf(info.UID) >= 0;
+    });
+
+    return newRoutes;
 }
