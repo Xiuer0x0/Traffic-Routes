@@ -4,15 +4,15 @@ import { CustomMap } from "./map";
 export default class MapMarker implements CustomMap.Marker {
     public marker: L.Marker;
 
-    private constructor(coordinate: L.LatLngExpression) {
-        this.marker = L.marker(coordinate);
+    private constructor(coordinate: L.LatLngExpression, options: L.MarkerOptions) {
+        this.marker = L.marker(coordinate, options);
     }
 
-    static create(coordinate: L.LatLngExpression): MapMarker {
-        return new MapMarker(coordinate);
+    static create(coordinate: L.LatLngExpression, options: L.MarkerOptions): MapMarker {
+        return new MapMarker(coordinate, options);
     }
 
-    public bindTooltip(content: string) {
+    public bindTooltip(content: string | HTMLElement) {
         const { marker } = this;
 
         marker.bindTooltip(content);

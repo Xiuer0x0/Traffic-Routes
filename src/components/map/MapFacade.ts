@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import _ from 'lodash';
 import { CustomMap } from './map';
 import mapConfig, { MapConfig } from './map.config';
 import MapInitializer from './MapInitializer';
@@ -6,6 +7,10 @@ import MapMarker from './MapMarker';
 import MapMarkerLayer from './MapMarkerLayer';
 import MapPolylineLayer from './MapPolylineLayer';
 import MapUtility from './MapUtility';
+
+interface drawPinOptions extends L.MarkerOptions {
+    tooltipTemplete?: string | HTMLElement,
+};
 
 export default class MapFacade {
     private map: L.Map | null = L.map(mapConfig.containerID);
@@ -31,17 +36,20 @@ export default class MapFacade {
         this.mapUtility.flyTo(lanLng, options);
     }
 
-    public drawPin(coordinate: L.LatLngExpression, tooltipTemplete: string = '') {
-        const marker = MapMarker.create(coordinate);
+    public drawPin(coordinate: L.LatLngExpression, options: drawPinOptions = {}) {
+        const pickKey = _.remove(Object.keys(options), (v) => v !== 'tooltipTemplete');
+        const markerOptions = _.pick(options, pickKey);
+        const marker = MapMarker.create(coordinate, markerOptions);
+        const { tooltipTemplete } = options;
 
-        marker.bindTooltip(tooltipTemplete);
+        marker.bindTooltip(tooltipTemplete || '');
 
         this.mapMarkerLayer.addMarker(marker);
     }
 
-    public drawPins(coordinates: L.LatLngExpression[], tooltipTemplete: string = '') {
+    public drawPins(coordinates: L.LatLngExpression[], options: drawPinOptions = {}) {
         coordinates.forEach(latLng => {
-            this.drawPin(latLng, tooltipTemplete);
+            this.drawPin(latLng, options);
         });
     }
 
