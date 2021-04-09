@@ -1,0 +1,64 @@
+.route-search {
+    $outer-spacing: 10pt;
+
+    position: absolute;
+    right: $outer-spacing;
+    top: $outer-spacing;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, .7);
+    padding: 10pt;
+    border: 2pt;
+
+    .search-input {
+        $padding-side: 1.5rem;
+
+        &-wrapper {
+            display: flex;
+            position: relative;
+
+            %span {
+                position: absolute;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;   width: $padding-side;
+            }
+
+            .icon-search {
+                @extend %span;
+                left: 0;
+            }
+
+            .btn-clear {
+                @extend %span;
+                right: 0;
+            }
+        }
+
+        padding: .125rem $padding-side 0;
+        width: 98%;
+        font-size: 1rem;
+    }
+
+    .filter-list {
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-width: 15rem;   max-height: 85vh;
+        padding-left: 2rem;
+    }
+
+    .route-name {
+        cursor: pointer;
+    }
+
+    .direction {
+        display: flex;
+
+        margin-right: .25rem;
+        margin-bottom: .25rem;
+        padding: .25rem;
+        background-color: rgba(0, 0, 0, .7);
+
+        cursor: pointer;
+    }
+}
