@@ -64,4 +64,10 @@ export default class MapFacade {
     public clearPolyline() {
         this.mapPolylineLayer.clear();
     }
+
+    public fitbounds(coordinates: L.LatLngExpression[], options?: L.FitBoundsOptions) {
+        const bounds = L.latLngBounds(coordinates);
+
+        this.map?.fitBounds(bounds, options);
+    }
 }

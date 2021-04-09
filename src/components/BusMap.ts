@@ -59,6 +59,7 @@ export default class BusMapFacade {
         this.clearPath();
         this.drawStops(data);
         this.mapFacade.drawPolyline(coordinates);
+        this.mapFacade.fitbounds(coordinates, { paddingBottomRight: [350, 0] });
     }
 
     public clearPath() {
