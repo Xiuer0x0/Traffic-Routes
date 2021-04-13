@@ -272,11 +272,20 @@ export default class RouteSearch {
         $span.className = 'direction';
         $span.innerText = (directionName ? `${text}： ${directionName}` : text);
         $span.addEventListener('click', (e) => {
+            this.pathDirectionTagActive(e.target as HTMLSpanElement);
             this.drawPathToMap(pathSequenceInfo.stopSequence);
             e.stopPropagation();
         });
 
         return $span;
+    }
+
+    private pathDirectionTagActive($el: HTMLSpanElement) {
+        $el.parentNode?.querySelectorAll('.active').forEach(($item) => {
+            $item.classList.remove('active');
+        });
+
+        $el.classList.add('active');
     }
 
     private getPathDirectionName(pathSequenceInfo: Bus.PathSequenceInfo): string | null {
