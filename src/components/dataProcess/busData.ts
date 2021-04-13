@@ -65,9 +65,9 @@ export default class BusData implements Bus.Data {
 }
 
 function requestBusData() {
-    const stopURL = '../../assets/data/GetStop.json';
-    const routeURL = '../../assets/data/GetRoute.json';
-    const pathURL = '../../assets/data/roadMap_sample.csv';
+    const stopURL = './assets/data/GetStop.json';
+    const routeURL = './assets/data/GetRoute.json';
+    const pathURL = './assets/data/roadMap_sample.csv';
 
     const request = Promise.all([
         fetchBusStop(stopURL, cityCodes.taipei),
