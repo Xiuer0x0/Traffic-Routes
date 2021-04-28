@@ -27,7 +27,7 @@ module.exports = webpackMerge(commonConfig, {
         open: {
             app: [
                 'chrome',
-                '--user-data-dir=./chromeTempDevUser',
+                `--user-data-dir=${__dirname}/chromeTempDevUser`,
                 '--incognito',
             ],
         },
